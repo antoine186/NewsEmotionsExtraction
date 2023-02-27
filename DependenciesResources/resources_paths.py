@@ -1,7 +1,6 @@
 
 from dataclasses import dataclass
 
-@dataclass(frozen=True)
 class ResourcesPath:
     emotion_classification_nn_path: str
     emotion_classification_tokenizer_path: str
