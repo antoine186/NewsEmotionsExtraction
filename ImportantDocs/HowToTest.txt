@@ -1,0 +1,9 @@
+# Run the below in plain git bash
+
+export FLASK_APP=ApplicationCore.application
+export FLASK_ENV=development
+python -m flask run
+
+# To exist flask run from git bash
+
+CTRL+C

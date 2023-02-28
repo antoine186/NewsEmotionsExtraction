@@ -11,6 +11,3 @@ if __name__ == "__main__":
 
     paths = Container.resources_path()
     nns = Container.neural_networks()
-
-    #print(paths.emotion_classification_nn_path)
-    print(nns)
