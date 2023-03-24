@@ -1,4 +1,5 @@
 import os
+import psycopg2
 
 SECRET_KEY = os.urandom(32)
 
@@ -9,7 +10,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 
 # Connect to the database
-SQLALCHEMY_DATABASE_URI = 'your psycopg2 URI connection'
+# postgres://{user}:{password}@{hostname}:{port}/{database-name}
+SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:login123@localhost:5432/postgres'
 
 # Turn off the Flask-SQLAlchemy event system and warning
 SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -1,21 +1,26 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 
-db = SQLAlchemy()
+app = Flask(__name__)
 
-class User(db.Model):
-    __tablename__ = 'users'
+with app.app_context():
+    db = SQLAlchemy()
+    print('bad')
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    age = db.Column(db.String(120))
-    password = db.Column(db.String(120))
+    class User(db.Model):
+        __tablename__ = 'users'
 
-    @property
-    def serialize(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'city': self.city,
-            'state': self.state,
-            'password': self.password
-        }
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String)
+        age = db.Column(db.String(120))
+        password = db.Column(db.String(120))
+
+        @property
+        def serialize(self):
+            return {
+                'id': self.id,
+                'name': self.name,
+                'city': self.city,
+                'state': self.state,
+                'password': self.password
+            }
