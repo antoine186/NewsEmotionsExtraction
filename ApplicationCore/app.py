@@ -1,14 +1,13 @@
-from flask import Flask, render_template
-from flask_migrate import Migrate
 import sys
+
+from flask import render_template
+from flask_migrate import Migrate
 
 sys.path.append('ApplicationCore')
 
-from models.User import db
-# from routes.user_bp import user_bp
+from models.User import db, app
 
-app = Flask(__name__)
-app.config.from_object('config')
+# from routes.user_bp import user_bp
 
 with app.app_context():
     db.init_app(app)

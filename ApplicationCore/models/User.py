@@ -2,10 +2,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 
 app = Flask(__name__)
+app.config.from_object('config')
 
 with app.app_context():
     db = SQLAlchemy()
-    print('bad')
 
     class User(db.Model):
         __tablename__ = 'users'
