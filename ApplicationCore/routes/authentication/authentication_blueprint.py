@@ -6,4 +6,4 @@ authentication_blueprint = Blueprint('authentication_blueprint', __name__)
 def login():
     args = request.args
 
-    return True
+    return "True"
