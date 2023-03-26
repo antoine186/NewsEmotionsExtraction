@@ -20,4 +20,6 @@ def login():
     )
     '''
 
+    all_results = User.query.all()
+
     return "True"

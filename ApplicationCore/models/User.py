@@ -3,8 +3,9 @@ from app_start_helper import app, db
 with app.app_context():
     class User(db.Model):
         __tablename__ = 'user'
+        __table_args__ = {'schema' : 'user_schema'}
 
-        id = db.Column(db.Integer, primary_key=True)
+        ID = db.Column(db.Integer, primary_key=True)
         username = db.Column(db.String(25))
         password = db.Column(db.String(25))
         first_name = db.Column(db.String(25))
