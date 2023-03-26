@@ -1,12 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
+import sys
 
-app = Flask(__name__)
-app.config.from_object('config')
+sys.path.append('ApplicationCore')
+
+from ApplicationCore.app import app, db
 
 with app.app_context():
-    db = SQLAlchemy()
-
     class User(db.Model):
         __tablename__ = 'users'
 

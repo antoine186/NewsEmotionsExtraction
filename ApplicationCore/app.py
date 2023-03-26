@@ -1,17 +1,21 @@
 import sys
 
-from flask import render_template
+from flask import Flask, render_template
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 sys.path.append('ApplicationCore')
 
-from models.User import db, app
+app = Flask(__name__)
+app.config.from_object('config')
+
+db = SQLAlchemy()
+migrate = Migrate(app, db)
 
 # from routes.user_bp import user_bp
 
 with app.app_context():
     db.init_app(app)
-    migrate = Migrate(app, db)
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 
