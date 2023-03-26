@@ -1,24 +1,15 @@
-import sys
-
-sys.path.append('ApplicationCore')
-
-from ApplicationCore.app import app, db
+from app_start_helper import app, db
 
 with app.app_context():
     class User(db.Model):
-        __tablename__ = 'users'
+        __tablename__ = 'user'
 
         id = db.Column(db.Integer, primary_key=True)
-        name = db.Column(db.String)
-        age = db.Column(db.String(120))
-        password = db.Column(db.String(120))
-
-        @property
-        def serialize(self):
-            return {
-                'id': self.id,
-                'name': self.name,
-                'city': self.city,
-                'state': self.state,
-                'password': self.password
-            }
+        username = db.Column(db.String(25))
+        password = db.Column(db.String(25))
+        first_name = db.Column(db.String(25))
+        last_name = db.Column(db.String(25))
+        primary_email = db.Column(db.String(25))
+        date_of_birth = db.Column(db.DateTime)
+        telephone_number = db.Column(db.String(25))
+        telephone_area_code = db.Column(db.String(25))
