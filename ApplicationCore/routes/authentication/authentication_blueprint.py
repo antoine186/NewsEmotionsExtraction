@@ -3,7 +3,7 @@ from models.user import User
 
 authentication_blueprint = Blueprint('authentication_blueprint', __name__)
 
-@authentication_blueprint.route('/auth-login', methods=['GET'])
+@authentication_blueprint.route('/auth-login', methods=['POST'])
 def login():
     args = request.args
 
