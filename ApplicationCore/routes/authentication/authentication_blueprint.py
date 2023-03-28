@@ -1,25 +1,19 @@
 from flask import Blueprint, request
+from sqlalchemy import text
 from models.user import User
+from app_start_helper import db
+import json
 
 authentication_blueprint = Blueprint('authentication_blueprint', __name__)
 
 @authentication_blueprint.route('/auth-login', methods=['POST'])
 def login():
-    args = request.args
+    payload = request.data
+    payload = json.loads(payload)
 
-    '''
-    new_test_user = User(
-        username = 'batman',
-        password = '123',
-        first_name = 'bat',
-        last_name = 'man',
-        primary_email = 'bat@man.com',
-        date_of_birth = '2000-01-01',
-        telephone_number = '123123',
-        telephone_area_code = '33'
-    )
-    '''
+    result = db.session.execute(text('SELECT user_schema.check_username_password(:username,:password)'), {'username': payload['username'], 'password': payload['password']}).fetchall()
 
-    all_results = User.query.all()
+    if result[0][0] == 1:
+        return json.dumps(True)
 
-    return "True"
+    return json.dumps(False)
