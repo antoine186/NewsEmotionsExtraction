@@ -7,7 +7,7 @@ import json
 
 authentication_blueprint = Blueprint('authentication_blueprint', __name__)
 
-@authentication_blueprint.route('/auth-login', methods=['POST'])
+@authentication_blueprint.route('/api/auth-login', methods=['POST'])
 def login():
     payload = request.data
     payload = json.loads(payload)
