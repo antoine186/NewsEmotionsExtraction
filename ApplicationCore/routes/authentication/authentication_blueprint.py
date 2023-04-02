@@ -4,7 +4,7 @@ from models.user_safe_view import UserSafeView
 from app_start_helper import db
 from Utils.create_secret_token import create_secret_token
 import json
-from datetime import date
+from datetime import datetime
 
 authentication_blueprint = Blueprint('authentication_blueprint', __name__)
 
@@ -23,10 +23,13 @@ def login():
         secret_token_1 = create_secret_token()
         secret_token_2 = create_secret_token()
 
-        today = date.today()
+        now = datetime.now()
+        now = now.strftime("%Y-%m-%d %H:%M:%S")
 
         db.session.execute(text('CALL user_schema.add_user_session(:user_id,:secret_token_1,:secret_token_2,:creation_date)'),
-                            {'user_id': validated_user_id, 'secret_token_1': secret_token_1, 'secret_token_2': secret_token_2, 'creation_date': today})
+                            {'user_id': validated_user_id, 'secret_token_1': secret_token_1, 'secret_token_2': secret_token_2, 'creation_date': now})
+
+        db.session.commit()
 
         session_token = {
             'username': payload['username'],
