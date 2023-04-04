@@ -17,4 +17,5 @@ container = Container()
 container.wire(modules=[sys.modules[__name__]])
 
 paths = Container.resources_path()
-nns = Container.neural_networks()
+nn = Container.tokenizer_neural_network()
+model_max_tokens_allowed = 512

@@ -3,7 +3,7 @@ import json
 from gnews import GNews
 from datetime import datetime, timedelta
 from operator import attrgetter
-from app_start_helper import nns
+from app_start_helper import nn, model_max_tokens_allowed
 from analysis.news_classifier import NewsClassifier
 
 emo_search_blueprint = Blueprint('emo_search_blueprint', __name__)
@@ -28,5 +28,5 @@ def login():
     # article['canonical_link']
     # article['text']
 
-    news_classifier = NewsClassifier(nns, results, google_news)
+    news_classifier = NewsClassifier(nn, results, google_news, model_max_tokens_allowed)
     news_classifier.get_emo_percentage_breakdown_with_leading_results()
