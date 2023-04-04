@@ -1,3 +1,6 @@
+import sys
+sys.path.append("ApplicationCore/analysis")
+
 from analytical_classes.emo_breakdown_percentage import EmoBreakdownPercentage
 from analytical_classes.emo_breakdown_result import EmoBreakdownResult
 
