@@ -21,8 +21,12 @@ def login():
     search_end_date = attrgetter(*attributes)(search_end_date)
     search_start_date = attrgetter(*attributes)(search_start_date)
 
-    google_news = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date)
+    google_news = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date, max_results = 1)
     results = google_news.get_news(payload['searchInput'])
 
-    news_classifier = NewsClassifier(nns, results)
+    # article = google_news.get_full_article(results[0]['url']) 
+    # article['canonical_link']
+    # article['text']
+
+    news_classifier = NewsClassifier(nns, results, google_news)
     news_classifier.get_emo_percentage_breakdown_with_leading_results()

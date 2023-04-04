@@ -3,12 +3,12 @@ from dependency_injector import containers, providers
 from .resources_paths import *
 from NeuralNetworks.NeuralNetwork import NeuralNetwork
 import torch
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelWithLMHead
 
-main_emo_classification_nn_model_path = './NeuralNetworks/t5-base-finetuned-emotion/pytorch_model.bin'
+main_emo_classification_nn_model_path = './NeuralNetworks/t5-base-finetuned-emotion/'
 main_emo_classification_nn_tokenizer_path = './NeuralNetworks/t5-base-finetuned-emotion/'
 
-main_emo_classification_nn_model = torch.load(main_emo_classification_nn_model_path, map_location=torch.device('cpu'))
+main_emo_classification_nn_model = AutoModelWithLMHead.from_pretrained(main_emo_classification_nn_model_path)
 main_emo_classification_nn_tokenizer = AutoTokenizer.from_pretrained(main_emo_classification_nn_tokenizer_path)
 
 class Container(containers.DeclarativeContainer):
