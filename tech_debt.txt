@@ -1,3 +1,5 @@
 1. Add the maximum session error display and/or DB cleanse
 2. Add the possibility to ENTER to login
 3. Create PostgreSQL cron jobs
+4. Cleanup text input to NN
+5. Change NN pipeline nonsensical naming
