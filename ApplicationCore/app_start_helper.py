@@ -18,4 +18,4 @@ container.wire(modules=[sys.modules[__name__]])
 
 paths = Container.resources_path()
 nn = Container.pipeline_neural_network()
-model_max_tokens_allowed = 512
+model_max_characters_allowed = 1000
