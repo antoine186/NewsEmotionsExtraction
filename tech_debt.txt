@@ -3,3 +3,4 @@
 3. Create PostgreSQL cron jobs
 4. Cleanup text input to NN
 5. Change NN pipeline nonsensical naming
+6. Find a nice way to overload the get_emo_breakdown function

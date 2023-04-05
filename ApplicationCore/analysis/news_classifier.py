@@ -2,8 +2,9 @@ import sys
 sys.path.append("ApplicationCore/analysis")
 
 from analytical_classes.emo_breakdown_result import EmoBreakdownResult
-from analytical_classes.emo_breakdown_percentage import EmoBreakdownPercentage
 from Utils.text_divider import text_divider
+from analysis.analytical_utils.get_emo_breakdown_percentage import get_emo_breakdown_percentage
+from analysis.analytical_utils.get_emo_breakdown_from_tranches import get_emo_breakdown_from_tranches
 
 
 class NewsClassifier:
@@ -17,17 +18,17 @@ class NewsClassifier:
         nb_articles_skipped = 0
         emo_breakdown_results = []
 
-        result_counter = 0
-
         most_emo_dict = {
-            'anger': {'score': 0, 'index': -1},
-            'disgust': {'score': 0, 'index': -1},
-            'joy': {'score': 0, 'index': -1},
-            'sadness': {'score': 0, 'index': -1},
-            'fear': {'score': 0, 'index': -1},
-            'surprise': {'score': 0, 'index': -1},
-            'neutral': {'score': 0, 'index': -1},
+        'anger': {'score': 0, 'index': -1},
+        'disgust': {'score': 0, 'index': -1},
+        'joy': {'score': 0, 'index': -1},
+        'sadness': {'score': 0, 'index': -1},
+        'fear': {'score': 0, 'index': -1},
+        'surprise': {'score': 0, 'index': -1},
+        'neutral': {'score': 0, 'index': -1},
         }
+
+        result_counter = 0
 
         for result in self.search_results:
             try:
@@ -55,29 +56,7 @@ class NewsClassifier:
                     article.text)
                 emo_breakdown = raw_emo_breakdown[0]
 
-                # This chain of if-else is very bad. It is a compromise.
-                for emo in emo_breakdown:
-                    if emo['label'] == 'anger':
-                        anger_percentage = emo['score']
-                    elif emo['label'] == 'disgust':
-                        disgust_percentage = emo['score']
-                    elif emo['label'] == 'joy':
-                        joy_percentage = emo['score']
-                    elif emo['label'] == 'sadness':
-                        sadness_percentage = emo['score']
-                    elif emo['label'] == 'fear':
-                        fear_percentage = emo['score']
-                    elif emo['label'] == 'surprise':
-                        surprise_percentage = emo['score']
-                    elif emo['label'] == 'neutral':
-                        neutral_percentage = emo['score']
-
-                    if most_emo_dict[emo['label']]['score'] < emo['score']:
-                        most_emo_dict[emo['label']]['score'] = emo['score']
-                        most_emo_dict[emo['label']]['index'] = result_counter
-
-                emo_breakdown_percentage = EmoBreakdownPercentage(sadness_percentage, joy_percentage, disgust_percentage, anger_percentage,
-                                                                  fear_percentage, surprise_percentage, neutral_percentage)
+                emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
 
                 emo_breakdown_result = EmoBreakdownResult(
                     article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_percentage)
@@ -85,6 +64,10 @@ class NewsClassifier:
                 result_counter += 1
             else:
                 tranches_list = text_divider(article.text, self.model_max_characters_allowed)
-                continue
+
+                emo_breakdown_result, most_emo_dict = get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list, self.main_emo_classification_nn_model, article, result)
+                emo_breakdown_results.append(emo_breakdown_result)
+
+                result_counter += 1
 
         return emo_breakdown_results
