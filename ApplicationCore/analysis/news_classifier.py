@@ -3,6 +3,7 @@ sys.path.append("ApplicationCore/analysis")
 
 from analytical_classes.emo_breakdown_result import EmoBreakdownResult
 from analytical_classes.emo_breakdown_percentage import EmoBreakdownPercentage
+from Utils.text_divider import text_divider
 
 
 class NewsClassifier:
@@ -83,7 +84,7 @@ class NewsClassifier:
                 emo_breakdown_results.append(emo_breakdown_result)
                 result_counter += 1
             else:
-                nb_articles_skipped += 1
+                tranches_list = text_divider(article.text, self.model_max_characters_allowed)
                 continue
 
         return emo_breakdown_results
