@@ -28,7 +28,10 @@ def emo_search():
     news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed)
     emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
 
-    emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
-    response = make_response(emo_breakdown_result_metadata_json_data)
+    if emo_breakdown_result_metadata != None:
+        emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
+        response = make_response(emo_breakdown_result_metadata_json_data)
+    else:
+        response = make_response(json.dumps('Error'))
 
     return response

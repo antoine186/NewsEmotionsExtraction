@@ -33,50 +33,54 @@ class NewsClassifier:
         result_counter = 0
         emo_breakdown_average = None
 
-        for result in self.search_results:
-            try:
-                article = self.google_news.get_full_article(result['url'])
-            except:
-                nb_articles_skipped += 1
-                continue
+        try:
+            for result in self.search_results:
+                try:
+                    article = self.google_news.get_full_article(result['url'])
+                except:
+                    nb_articles_skipped += 1
+                    continue
 
-            if (article == None):
-                nb_articles_skipped += 1
-                continue
+                if (article == None):
+                    nb_articles_skipped += 1
+                    continue
 
-            if len(article.text) < self.model_max_characters_allowed:
-                """
-                input_ids = self.main_emo_classification_nn_tokenizer.encode(
-                    article.text, return_tensors='pt')
-                output = self.main_emo_classification_nn_model.generate(
-                    input_ids=input_ids)
+                if len(article.text) < self.model_max_characters_allowed:
+                    """
+                    input_ids = self.main_emo_classification_nn_tokenizer.encode(
+                        article.text, return_tensors='pt')
+                    output = self.main_emo_classification_nn_model.generate(
+                        input_ids=input_ids)
 
-                decoded = [self.main_emo_classification_nn_tokenizer.decode(ids) for ids in output]
-                label = decoded[0]
-                """
+                    decoded = [self.main_emo_classification_nn_tokenizer.decode(ids) for ids in output]
+                    label = decoded[0]
+                    """
 
-                raw_emo_breakdown = self.main_emo_classification_nn_model(
-                    article.text)
-                emo_breakdown = raw_emo_breakdown[0]
+                    raw_emo_breakdown = self.main_emo_classification_nn_model(
+                        article.text)
+                    emo_breakdown = raw_emo_breakdown[0]
 
-                emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
+                    emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
 
-                if emo_breakdown_average == None:
-                    emo_breakdown_average = emo_breakdown_percentage
+                    if emo_breakdown_average == None:
+                        emo_breakdown_average = emo_breakdown_percentage
+                    else:
+                        emo_breakdown_average = update_emo_breakdown_average(emo_breakdown_percentage, emo_breakdown_average, result_counter)
+
+                    emo_breakdown_result = EmoBreakdownResult(
+                        article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_percentage)
+                    emo_breakdown_results.append(emo_breakdown_result)
+                    result_counter += 1
                 else:
-                    emo_breakdown_average = update_emo_breakdown_average(emo_breakdown_percentage, emo_breakdown_average, result_counter)
+                    tranches_list = text_divider(article.text, self.model_max_characters_allowed)
 
-                emo_breakdown_result = EmoBreakdownResult(
-                    article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_percentage)
-                emo_breakdown_results.append(emo_breakdown_result)
-                result_counter += 1
-            else:
-                tranches_list = text_divider(article.text, self.model_max_characters_allowed)
+                    emo_breakdown_result, most_emo_dict = get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list, self.main_emo_classification_nn_model, article, result)
+                    emo_breakdown_results.append(emo_breakdown_result)
 
-                emo_breakdown_result, most_emo_dict = get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list, self.main_emo_classification_nn_model, article, result)
-                emo_breakdown_results.append(emo_breakdown_result)
+                    result_counter += 1
 
-                result_counter += 1
+        except:
+            return None
 
         emo_breakdown_result_metadata = EmoBreakdownResultMetadata(emo_breakdown_results, nb_articles_skipped, emo_breakdown_average, emo_breakdown_results[most_emo_dict['anger']['index']], 
                  emo_breakdown_results[most_emo_dict['disgust']['index']], emo_breakdown_results[most_emo_dict['sadness']['index']], emo_breakdown_results[most_emo_dict['joy']['index']], 
