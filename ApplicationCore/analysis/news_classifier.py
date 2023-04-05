@@ -31,6 +31,7 @@ class NewsClassifier:
         }
 
         result_counter = 0
+        emo_breakdown_average = None
 
         for result in self.search_results:
             try:
@@ -60,7 +61,7 @@ class NewsClassifier:
 
                 emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
 
-                if result_counter == 0:
+                if emo_breakdown_average == None:
                     emo_breakdown_average = emo_breakdown_percentage
                 else:
                     emo_breakdown_average = update_emo_breakdown_average(emo_breakdown_percentage, emo_breakdown_average, result_counter)
