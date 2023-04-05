@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from operator import attrgetter
 from app_start_helper import nn, model_max_characters_allowed
 from analysis.news_classifier import NewsClassifier
+from Utils.json_encoder import GenericJsonEncoder
 
 emo_search_blueprint = Blueprint('emo_search_blueprint', __name__)
 
@@ -25,7 +26,9 @@ def emo_search():
     results = google_news.get_news(payload['searchInput'])
 
     news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed)
-    emo_breakdown_results = news_classifier.get_emo_percentage_breakdown_with_leading_results()
+    emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
 
-    response = make_response(json.dumps(True))
+    emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
+    response = make_response(emo_breakdown_result_metadata_json_data)
+
     return response
