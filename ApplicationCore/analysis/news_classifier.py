@@ -75,6 +75,12 @@ class NewsClassifier:
                     tranches_list = text_divider(article.text, self.model_max_characters_allowed)
 
                     emo_breakdown_result, most_emo_dict = get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list, self.main_emo_classification_nn_model, article, result)
+
+                    if emo_breakdown_average == None:
+                        emo_breakdown_average = emo_breakdown_result.emo_breakdown
+                    else:
+                        emo_breakdown_average = update_emo_breakdown_average(emo_breakdown_result.emo_breakdown, emo_breakdown_average, result_counter)
+
                     emo_breakdown_results.append(emo_breakdown_result)
 
                     result_counter += 1
