@@ -4,11 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 import sys
 from DependenciesResources.containers import Container
 
-from DependenciesResources.resources_paths import ResourcesPath
-from dependency_injector.wiring import inject, Provide
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+CORS(app, supports_credentials=True)
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
