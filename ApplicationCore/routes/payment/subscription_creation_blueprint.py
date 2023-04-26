@@ -33,6 +33,30 @@ def subscription_create():
             expand=['latest_invoice.payment_intent'],
         )
 
+        # DB operations here
+        get_user_id = 'SELECT user_schema.get_user_id(:username)'
+
+        user_id = db.session.execute(text(get_user_id), {'username': payload['accountCreationData']['emailAddress']}).fetchall()
+
+        add_stripe_customer_sp = 'CALL payment_schema.add_stripe_customer(:user_id,:stripe_customer_id)'
+
+        db.session.execute(text(add_stripe_customer_sp), {'user_id': user_id, 'stripe_customer_id': customer_id})
+        db.session.commit()
+
+        #
+        get_internal_stripe_customer_id
+        _user_id
+
+        get_internal_stripe_customer_id = 'SELECT payment_schema.get_internal_stripe_customer_id(:user_id)'
+
+        internal_stripe_customer_id = db.session.execute(text(get_internal_stripe_customer_id), {'user_id': user_id}).fetchall()
+
+        add_stripe_subscription_sp = 'CALL payment_schema.add_stripe_subscription(:stripe_subscription_id,:internal_stripe_customer_id,:stripe_subscription_status)'
+
+        db.session.execute(text(add_stripe_subscription_sp), {'stripe_subscription_id': subscription.id, 'internal_stripe_customer_id': \
+                                                              internal_stripe_customer_id, 'stripe_subscription_status': subscription.payment_behavior})
+        db.session.commit()
+
         operation_response = {
             "operation_success": True,
             "responsePayload": {

@@ -10,7 +10,7 @@ def basic_account_create():
     payload = request.data
     payload = json.loads(payload)
 
-    check_username_present_sp = 'SELECT user_schema.check_username_present(:username)'
+    check_username_present = 'SELECT user_schema.check_username_present(:username)'
 
     add_basic_account_data_sp = 'CALL user_schema.add_basic_account_data(:primary_email,:password,:first_name,:last_name, \
         :date_of_birth,:telephone_number,:telephone_area_code)'
@@ -19,7 +19,7 @@ def basic_account_create():
     
     add_user_address_sp = 'CALL user_schema.add_user_address(:user_id,:country,:city,:street_1,:street_2,:zipcode,:state)'
 
-    username_already_present = db.session.execute(text(check_username_present_sp), {'username': payload['accountCreationData']['emailAddress']}).fetchall()
+    username_already_present = db.session.execute(text(check_username_present), {'username': payload['accountCreationData']['emailAddress']}).fetchall()
 
     if username_already_present[0][0] == 1:
         operation_response = {
