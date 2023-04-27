@@ -43,20 +43,10 @@ def subscription_create():
         db.session.execute(text(add_stripe_customer_sp), {'user_id': user_id[0][0], 'stripe_customer_id': customer_id})
         db.session.commit()
 
-        get_internal_stripe_customer_id = 'SELECT payment_schema.get_internal_stripe_customer_id(:user_id)'
-
-        internal_stripe_customer_id = db.session.execute(text(get_internal_stripe_customer_id), {'user_id': user_id[0][0]}).fetchall()
-
-        add_stripe_subscription_sp = 'CALL payment_schema.add_stripe_subscription(:stripe_subscription_id,:internal_stripe_customer_id,:stripe_subscription_status)'
-
-        db.session.execute(text(add_stripe_subscription_sp), {'stripe_subscription_id': subscription.id, 'internal_stripe_customer_id': \
-                                                              internal_stripe_customer_id[0][0], 'stripe_subscription_status': subscription['status']})
-        db.session.commit()
-
         operation_response = {
             "operation_success": True,
             "responsePayload": {
-                "subscription_id": subscription.id,
+                "stripe_subscription_id": subscription.id,
                 "client_secret": subscription.latest_invoice.payment_intent.client_secret
             },
             "error_message": "" 
@@ -67,6 +57,8 @@ def subscription_create():
     except Exception as e:
         operation_response = {
             "operation_success": False,
+            "responsePayload": {
+            },
             "error_message": "" 
         }
         response = make_response(json.dumps(operation_response))

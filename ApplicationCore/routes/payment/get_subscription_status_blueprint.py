@@ -18,7 +18,7 @@ def get_subscription_status():
     operation_response = {
         "operation_success": True,
         "responsePayload": {
-            "stripe_subscription_status": stripe_subscription_status
+            "stripe_subscription_status": stripe_subscription_status[0][0]
         },
         "error_message": "" 
     }
