@@ -10,6 +10,8 @@ from search.emo_search_blueprint import emo_search_blueprint
 from account_data.basic_account_creation_blueprint import basic_account_creation_blueprint
 from payment.stripe_customer_creation_blueprint import stripe_customer_creation_blueprint
 from payment.subscription_creation_blueprint import subscription_creation_blueprint
+from payment.get_subscription_status_blueprint import get_subscription_status_blueprint
+from payment.get_subscription_id_blueprint import get_subscription_id_blueprint
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(main_page_blueprint)
@@ -19,6 +21,8 @@ app.register_blueprint(emo_search_blueprint)
 app.register_blueprint(basic_account_creation_blueprint)
 app.register_blueprint(stripe_customer_creation_blueprint)
 app.register_blueprint(subscription_creation_blueprint)
+app.register_blueprint(get_subscription_status_blueprint)
+app.register_blueprint(get_subscription_id_blueprint)
 
 with app.app_context():
     db.init_app(app)
