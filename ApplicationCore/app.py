@@ -13,6 +13,8 @@ from payment.subscription_creation_blueprint import subscription_creation_bluepr
 from payment.get_subscription_status_blueprint import get_subscription_status_blueprint
 from payment.get_subscription_id_blueprint import get_subscription_id_blueprint
 from payment.store_new_subscription_blueprint import store_new_subscription_blueprint
+from payment.update_subscription_status_blueprint import update_subscription_status_blueprint
+from account_data.delete_account_blueprint import delete_account_blueprint
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(main_page_blueprint)
@@ -25,6 +27,8 @@ app.register_blueprint(subscription_creation_blueprint)
 app.register_blueprint(get_subscription_status_blueprint)
 app.register_blueprint(get_subscription_id_blueprint)
 app.register_blueprint(store_new_subscription_blueprint)
+app.register_blueprint(update_subscription_status_blueprint)
+app.register_blueprint(delete_account_blueprint)
 
 with app.app_context():
     db.init_app(app)

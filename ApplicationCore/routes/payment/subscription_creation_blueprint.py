@@ -33,16 +33,6 @@ def subscription_create():
             expand=['latest_invoice.payment_intent'],
         )
 
-        # DB operations here
-        get_user_id = 'SELECT user_schema.get_user_id(:username)'
-
-        user_id = db.session.execute(text(get_user_id), {'username': payload['emailAddress']}).fetchall()
-
-        add_stripe_customer_sp = 'CALL payment_schema.add_stripe_customer(:user_id,:stripe_customer_id)'
-
-        db.session.execute(text(add_stripe_customer_sp), {'user_id': user_id[0][0], 'stripe_customer_id': customer_id})
-        db.session.commit()
-
         operation_response = {
             "operation_success": True,
             "responsePayload": {

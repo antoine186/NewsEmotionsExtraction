@@ -16,26 +16,47 @@ def stripe_customer_create():
     payload = request.data
     payload = json.loads(payload)
 
-    new_stripe_customer = stripe.Customer.create(
-    email=payload['accountCreationData']['emailAddress'],
-    name=payload['accountCreationData']['firstName'] + " " + payload['accountCreationData']['lastName'],
-    address={
-        "city": payload['accountCreationData']['selectedCityName'],
-        "country": payload['accountCreationData']['selectedCountryCode'],
-        "line1": payload['accountCreationData']['addressLine1'],
-        "line2": payload['accountCreationData']['addressLine2'],
-        "postal_code": payload['accountCreationData']['zipCode'],
-        "state": payload['accountCreationData']['selectedStateCode'],
-    },
-    )
-
-    operation_response = {
-        "operation_success": True,
-        "responsePayload": {
-            "stripe_customer_id": new_stripe_customer.id
+    try:
+        new_stripe_customer = stripe.Customer.create(
+        email=payload['accountCreationData']['emailAddress'],
+        name=payload['accountCreationData']['firstName'] + " " + payload['accountCreationData']['lastName'],
+        address={
+            "city": payload['accountCreationData']['selectedCityName'],
+            "country": payload['accountCreationData']['selectedCountryCode'],
+            "line1": payload['accountCreationData']['addressLine1'],
+            "line2": payload['accountCreationData']['addressLine2'],
+            "postal_code": payload['accountCreationData']['zipCode'],
+            "state": payload['accountCreationData']['selectedStateCode'],
         },
-        "error_message": "" 
-    }
-    response = make_response(json.dumps(operation_response))
-    return response
+        )
+
+        # DB operations here
+        get_user_id = 'SELECT user_schema.get_user_id(:username)'
+
+        user_id = db.session.execute(text(get_user_id), {'username': payload['accountCreationData']['emailAddress']}).fetchall()
+
+        add_stripe_customer_sp = 'CALL payment_schema.add_stripe_customer(:user_id,:stripe_customer_id)'
+
+        db.session.execute(text(add_stripe_customer_sp), {'user_id': user_id[0][0], 'stripe_customer_id': new_stripe_customer.id})
+        db.session.commit()
+
+        operation_response = {
+            "operation_success": True,
+            "responsePayload": {
+                "stripe_customer_id": new_stripe_customer.id
+            },
+            "error_message": "" 
+        }
+        response = make_response(json.dumps(operation_response))
+        return response
+   
+    except Exception as e:
+        operation_response = {
+            "operation_success": False,
+            "responsePayload": {
+            },
+            "error_message": "" 
+        }
+        response = make_response(json.dumps(operation_response))
+        return response
     
