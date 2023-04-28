@@ -24,3 +24,5 @@ def delete_account():
 
     db.session.execute(text(delete_user), {'user_id': user_id[0][0]})
     db.session.commit()
+
+    return json.dumps(True)

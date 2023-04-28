@@ -17,3 +17,5 @@ def update_subscription_status():
                                                                      'stripe_subscription_status': payload['subscriptionStatus']})
     
     db.session.commit()
+
+    return json.dumps(True)
