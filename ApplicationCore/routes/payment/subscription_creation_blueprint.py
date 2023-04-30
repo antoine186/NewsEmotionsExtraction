@@ -39,6 +39,7 @@ def subscription_create():
             items=[{
                 'price': price_id,
             }],
+            currency='usd',
             payment_behavior='default_incomplete',
             payment_settings={'save_default_payment_method': 'on_subscription'},
             expand=['latest_invoice.payment_intent'],
