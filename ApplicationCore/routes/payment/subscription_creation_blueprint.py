@@ -20,6 +20,17 @@ def subscription_create():
     price_id = payload['priceId']
 
     try:
+        '''
+        #subscription_list = stripe.Subscription.list(customer = customer_id)
+        subscription_list = stripe.Subscription.list()
+  
+        for i in range(len(subscription_list)):
+            existing_subscription = subscription_list.data[i]
+            if existing_subscription.status == 'incomplete':
+                print('Deleted previous incomplete subscription')
+                stripe.SubscriptionItem.delete(
+                    existing_subscription.id,
+                )'''
         # Create the subscription. Note we're expanding the Subscription's
         # latest invoice and that invoice's payment_intent
         # so we can pass it to the front end to confirm the payment

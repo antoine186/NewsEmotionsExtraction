@@ -17,6 +17,9 @@ from payment.update_subscription_status_blueprint import update_subscription_sta
 from account_data.delete_account_blueprint import delete_account_blueprint
 from payment.retrieve_subscription_details_blueprint import retrieve_subscription_details_blueprint
 from account_data.retrieve_account_data_blueprint import retrieve_account_data_blueprint
+from payment.setupintent_creation_blueprint import setupintent_creation_blueprint
+from payment.get_stripe_customer_id_blueprint import get_stripe_customer_id_blueprint
+from payment.delete_subscription_blueprint import delete_subscription_blueprint
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(main_page_blueprint)
@@ -33,6 +36,9 @@ app.register_blueprint(update_subscription_status_blueprint)
 app.register_blueprint(delete_account_blueprint)
 app.register_blueprint(retrieve_subscription_details_blueprint)
 app.register_blueprint(retrieve_account_data_blueprint)
+#app.register_blueprint(setupintent_creation_blueprint)
+app.register_blueprint(get_stripe_customer_id_blueprint)
+app.register_blueprint(delete_subscription_blueprint)
 
 with app.app_context():
     db.init_app(app)
