@@ -17,8 +17,9 @@ def delete_subscription():
     payload = json.loads(payload)
 
     try:
-        stripe.Subscription.delete(
+        deleted_subscription = stripe.Subscription.delete(
             payload['stripeSubscriptionId'],
+            prorate=True
         )
 
         get_user_id = 'SELECT user_schema.get_user_id(:username)'
@@ -35,6 +36,7 @@ def delete_subscription():
 
         db.session.commit()
 
+        '''
         operation_response = {
             "operation_success": True,
             "responsePayload": {
@@ -42,13 +44,40 @@ def delete_subscription():
             "error_message": ""
         }
         response = make_response(json.dumps(operation_response))
-        return response
+        return response'''
     except Exception as e:
         operation_response = {
             "operation_success": False,
             "responsePayload": {
             },
-            "error_message": "" 
+            "error_message": "Subscription deletion failed" 
+        }
+        response = make_response(json.dumps(operation_response))
+        return response
+    
+    try:
+        customer_invoice_list = stripe.InvoiceItem.list(
+            customer=deleted_subscription.customer,
+            pending=True
+        )
+
+        amount_to_refund = -customer_invoice_list.data[0].amount
+
+        stripe.InvoiceItem.delete(
+            customer_invoice_list.data[0].id,
+        )
+
+        last_cancelled_invoice = stripe.Invoice.retrieve(
+            deleted_subscription.id,
+        )
+
+        stripe.Refund.create(payment_intent=last_cancelled_invoice.payment_intent, amount=amount_to_refund)
+    except Exception as e:
+        operation_response = {
+            "operation_success": False,
+            "responsePayload": {
+            },
+            "error_message": "Refund failed" 
         }
         response = make_response(json.dumps(operation_response))
         return response
