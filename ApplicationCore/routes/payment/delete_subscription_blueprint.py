@@ -36,15 +36,6 @@ def delete_subscription():
 
         db.session.commit()
 
-        '''
-        operation_response = {
-            "operation_success": True,
-            "responsePayload": {
-            },
-            "error_message": ""
-        }
-        response = make_response(json.dumps(operation_response))
-        return response'''
     except Exception as e:
         operation_response = {
             "operation_success": False,
@@ -81,3 +72,12 @@ def delete_subscription():
         }
         response = make_response(json.dumps(operation_response))
         return response
+    
+    operation_response = {
+        "operation_success": True,
+        "responsePayload": {
+        },
+        "error_message": ""
+    }
+    response = make_response(json.dumps(operation_response))
+    return response
