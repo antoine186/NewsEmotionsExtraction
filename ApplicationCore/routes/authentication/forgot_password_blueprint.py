@@ -6,6 +6,7 @@ from sqlalchemy import text
 from Utils.create_secret_token import create_secret_token
 from flask_mail import Mail, Message
 from app_start_helper import mail
+from threading import Thread
 
 forgot_password_blueprint = Blueprint('forgot_password_blueprint', __name__)
 
@@ -17,6 +18,16 @@ def forgot_password():
     get_user_id = 'SELECT user_schema.get_user_id(:username)'
 
     user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
+    
+    if user_id[0][0] == None:
+        operation_response = {
+            "operation_success": False,
+            "responsePayload": {
+            },
+            "error_message": "Account does not exist" 
+        }
+        response = make_response(json.dumps(operation_response))
+        return response
 
     delete_password_token_sp = 'CALL user_schema.delete_password_token(:user_id)'
 
@@ -37,7 +48,8 @@ def forgot_password():
     msg.recipients = [payload['username']]
     msg.sender = 'noreply@emomachines.xyz'
     msg.body = 'Your password reset token is ' + password_token +  '.'
-    mail.send(msg)
+
+    Thread(target=mail.send(msg)).start()
 
     operation_response = {
         "operation_success": True,
