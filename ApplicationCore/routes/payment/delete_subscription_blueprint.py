@@ -17,6 +17,14 @@ def delete_subscription():
     payload = json.loads(payload)
 
     try:
+        subscription_to_delete = stripe.Subscription.retrieve(
+            payload['stripeSubscriptionId'],
+        )
+
+        last_cancelled_invoice = stripe.Invoice.retrieve(
+            subscription_to_delete.latest_invoice,
+        )
+
         deleted_subscription = stripe.Subscription.delete(
             payload['stripeSubscriptionId'],
             prorate=True
@@ -56,10 +64,6 @@ def delete_subscription():
 
         stripe.InvoiceItem.delete(
             customer_invoice_list.data[0].id,
-        )
-
-        last_cancelled_invoice = stripe.Invoice.retrieve(
-            deleted_subscription.id,
         )
 
         stripe.Refund.create(payment_intent=last_cancelled_invoice.payment_intent, amount=amount_to_refund)
