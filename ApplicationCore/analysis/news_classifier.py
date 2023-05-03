@@ -10,12 +10,16 @@ from analysis.analytical_utils.update_emo_breakdown_average import update_emo_br
 
 
 class NewsClassifier:
-    def __init__(self, nn, search_results, google_news, model_max_characters_allowed, keyword_extractor_nn):
+    def __init__(self, nn, search_results, google_news, model_max_characters_allowed, keyword_extractor_nn, search_input, \
+                 search_start_date, search_end_date):
         self.main_emo_classification_nn_model = nn.nn_model
         self.search_results = search_results
         self.google_news = google_news
         self.model_max_characters_allowed = model_max_characters_allowed
         self.keyword_extractor_nn = keyword_extractor_nn
+        self.search_input = search_input
+        self.search_start_date = search_start_date
+        self.search_end_date = search_end_date
 
     def get_emo_percentage_breakdown_with_leading_results(self):
         nb_articles_skipped = 0
@@ -95,7 +99,7 @@ class NewsClassifier:
             emo_breakdown_result_metadata = EmoBreakdownResultMetadata(emo_breakdown_results, nb_articles_skipped, emo_breakdown_average, emo_breakdown_results[most_emo_dict['anger']['index']], 
                  emo_breakdown_results[most_emo_dict['disgust']['index']], emo_breakdown_results[most_emo_dict['sadness']['index']], emo_breakdown_results[most_emo_dict['joy']['index']], 
                  emo_breakdown_results[most_emo_dict['fear']['index']], emo_breakdown_results[most_emo_dict['surprise']['index']], emo_breakdown_results[most_emo_dict['neutral']['index']],
-                 extracted_keywords)
+                 extracted_keywords, self.search_input, self.search_start_date, self.search_end_date)
         
             return emo_breakdown_result_metadata
 

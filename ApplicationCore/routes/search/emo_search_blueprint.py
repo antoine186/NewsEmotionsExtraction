@@ -27,7 +27,8 @@ def emo_search():
     google_news = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date, max_results = 20)
     results = google_news.get_news(payload['searchInput'])
 
-    news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed, keyword_extractor_nn)
+    news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['searchInput'], \
+                                     search_start_date, search_end_date)
     emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
 
     if emo_breakdown_result_metadata != None:
