@@ -28,4 +28,5 @@ container.wire(modules=[sys.modules[__name__]])
 
 paths = Container.resources_path()
 nn = Container.pipeline_neural_network()
+keyword_extractor_nn = Container.keyword_extractor_neural_network()
 model_max_characters_allowed = 900

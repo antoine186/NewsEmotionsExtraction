@@ -10,11 +10,12 @@ from analysis.analytical_utils.update_emo_breakdown_average import update_emo_br
 
 
 class NewsClassifier:
-    def __init__(self, nn, search_results, google_news, model_max_characters_allowed):
+    def __init__(self, nn, search_results, google_news, model_max_characters_allowed, keyword_extractor_nn):
         self.main_emo_classification_nn_model = nn.nn_model
         self.search_results = search_results
         self.google_news = google_news
         self.model_max_characters_allowed = model_max_characters_allowed
+        self.keyword_extractor_nn = keyword_extractor_nn
 
     def get_emo_percentage_breakdown_with_leading_results(self):
         nb_articles_skipped = 0
@@ -60,6 +61,10 @@ class NewsClassifier:
                         article.text)
                     emo_breakdown = raw_emo_breakdown[0]
 
+                    raw_extracted_keywords = self.keyword_extractor_nn.nn_model.extract_keywords(article.text, keyphrase_ngram_range=(1, 2), stop_words=None)
+
+                    extracted_keywords = raw_extracted_keywords
+
                     emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
 
                     if emo_breakdown_average == None:
@@ -74,7 +79,7 @@ class NewsClassifier:
                 else:
                     tranches_list = text_divider(article.text, self.model_max_characters_allowed)
 
-                    emo_breakdown_result, most_emo_dict = get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list, self.main_emo_classification_nn_model, article, result)
+                    emo_breakdown_result, most_emo_dict, extracted_keywords = get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list, self.main_emo_classification_nn_model, article, result, self.keyword_extractor_nn)
 
                     if emo_breakdown_average == None:
                         emo_breakdown_average = emo_breakdown_result.emo_breakdown
@@ -85,9 +90,12 @@ class NewsClassifier:
 
                     result_counter += 1
 
+            extracted_keywords.sort(key=lambda word_pair: word_pair[1], reverse = True)
+
             emo_breakdown_result_metadata = EmoBreakdownResultMetadata(emo_breakdown_results, nb_articles_skipped, emo_breakdown_average, emo_breakdown_results[most_emo_dict['anger']['index']], 
                  emo_breakdown_results[most_emo_dict['disgust']['index']], emo_breakdown_results[most_emo_dict['sadness']['index']], emo_breakdown_results[most_emo_dict['joy']['index']], 
-                 emo_breakdown_results[most_emo_dict['fear']['index']], emo_breakdown_results[most_emo_dict['surprise']['index']], emo_breakdown_results[most_emo_dict['neutral']['index']])
+                 emo_breakdown_results[most_emo_dict['fear']['index']], emo_breakdown_results[most_emo_dict['surprise']['index']], emo_breakdown_results[most_emo_dict['neutral']['index']],
+                 extracted_keywords)
         
             return emo_breakdown_result_metadata
 
