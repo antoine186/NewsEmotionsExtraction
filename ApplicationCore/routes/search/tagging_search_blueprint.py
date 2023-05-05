@@ -31,44 +31,80 @@ def tagging_search():
     results = google_news.get_news(payload['searchInput'])
     comparison_results = comparison_google_news.get_news(payload['searchInput'])
 
-    news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['searchInput'], \
-                                     search_start_date, search_end_date)
-    comparison_news_classifier = NewsClassifier(nn, comparison_results, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['searchInput'], \
-                                     comparison_start_date, search_start_date)
-    emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
-    comparison_emo_breakdown_result_metadata = comparison_news_classifier.get_emo_percentage_breakdown_with_leading_results()
+    try:
+        news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['searchInput'], \
+                                        search_start_date, search_end_date)
+        comparison_news_classifier = NewsClassifier(nn, comparison_results, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['searchInput'], \
+                                        comparison_start_date, search_start_date)
+        emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
+        comparison_emo_breakdown_result_metadata = comparison_news_classifier.get_emo_percentage_breakdown_with_leading_results()
+        emo_breakdown_result_metadata.previous_average_emo_breakdown = emo_breakdown_result_metadata.average_emo_breakdown
+        
+        if emo_breakdown_result_metadata != None:
+            emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
 
-    if emo_breakdown_result_metadata != None:
-        emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
+            get_user_id = 'SELECT user_schema.get_user_id(:username)'
 
-        get_user_id = 'SELECT user_schema.get_user_id(:username)'
+            user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
 
-        user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
+            get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 
-        get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
+            existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
 
-        existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
+            if existing_tagging_query_id[0][0] == None:
+                save_tagging_query_sp = 'CALL search_schema.save_tagging_query(:user_id,:tagging_query)'
+                db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
 
-        if existing_tagging_query_id[0][0] == None:
-            save_tagging_query_sp = 'CALL search_schema.save_tagging_query(:user_id,:tagging_query)'
-            db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
+                db.session.commit()
 
-            db.session.commit()
+                get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 
-        delete_search_result_sp = 'CALL search_schema.delete_search_result(:user_id)'
+                existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
 
-        db.session.execute(text(delete_search_result_sp), {'user_id': user_id[0][0]})
+                save_tagging_result_sp = 'CALL search_schema.save_tagging_result(:tagging_query_id,:tagging_result_json)'
+                db.session.execute(text(save_tagging_result_sp), {'tagging_query_id': existing_tagging_query_id[0][0], 'tagging_result_json': emo_breakdown_result_metadata_json_data})
 
-        db.session.commit()
+                db.session.commit()
+            else:
+                update_tagging_result_sp = 'CALL search_schema.update_tagging_result(:tagging_query_id,:tagging_result_json)'
 
-        save_search_result_sp = 'CALL search_schema.save_search_result(:user_id,:search_result_json)'
+                db.session.execute(text(update_tagging_result_sp), {'tagging_query_id': existing_tagging_query_id[0][0], 'tagging_result_json': emo_breakdown_result_metadata_json_data})
 
-        db.session.execute(text(save_search_result_sp), {'user_id': user_id[0][0], 'search_result_json': emo_breakdown_result_metadata_json_data})
+                db.session.commit()
+        else:
+            emo_breakdown_result_metadata_json_data = 'No results'
 
-        db.session.commit()
+            get_user_id = 'SELECT user_schema.get_user_id(:username)'
 
-        response = make_response(emo_breakdown_result_metadata_json_data)
-    else:
+            user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
+
+            get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
+
+            existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
+
+            if existing_tagging_query_id[0][0] == None:
+                save_tagging_query_sp = 'CALL search_schema.save_tagging_query(:user_id,:tagging_query)'
+                db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
+
+                db.session.commit()
+
+                get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
+
+                existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
+
+                save_tagging_result_sp = 'CALL search_schema.save_tagging_result(:tagging_query_id,:tagging_result_json)'
+                db.session.execute(text(save_tagging_result_sp), {'tagging_query_id': existing_tagging_query_id[0][0], 'tagging_result_json': emo_breakdown_result_metadata_json_data})
+
+                db.session.commit()
+            else:
+                update_tagging_result_sp = 'CALL search_schema.update_tagging_result(:tagging_query_id,:tagging_result_json)'
+
+                db.session.execute(text(update_tagging_result_sp), {'tagging_query_id': existing_tagging_query_id[0][0], 'tagging_result_json': emo_breakdown_result_metadata_json_data})
+
+                db.session.commit()
+
+        response = make_response(json.dumps(True))
+    except:
         response = make_response(json.dumps('Error'))
 
     return response
