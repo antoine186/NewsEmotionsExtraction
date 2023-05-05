@@ -54,6 +54,6 @@ def get_emo_breakdown_from_tranches(result_counter, most_emo_dict, tranches_list
         most_emo_dict['neutral']['index'] = result_counter
 
     emo_breakdown_result = EmoBreakdownResult(
-        article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_average)
+        article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_average, extracted_keywords_list)
     
-    return emo_breakdown_result, most_emo_dict, raw_extracted_keywords
+    return emo_breakdown_result, most_emo_dict

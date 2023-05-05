@@ -1,6 +1,9 @@
 import sys
 sys.path.append('ApplicationCore')
 sys.path.append('ApplicationCore/routes')
+sys.path.append('ApplicationCore/scheduled_jobs')
+from scheduled_jobs.session_kick import session_kick
+from scheduled_jobs.apscheduler_start_cleanup import apscheduler_start_cleanup
 
 from app_start_helper import app, db
 from main_pages.main_page_blueprint import main_page_blueprint
@@ -48,6 +51,9 @@ app.register_blueprint(get_previous_search_result_blueprint)
 
 with app.app_context():
     db.init_app(app)
+
+    session_kick()
+    apscheduler_start_cleanup()
 
 if __name__ == '__main__':
     app.debug = True
