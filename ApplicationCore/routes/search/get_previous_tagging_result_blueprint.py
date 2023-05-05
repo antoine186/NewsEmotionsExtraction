@@ -17,8 +17,12 @@ def get_previous_tagging_result():
     get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 
     existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
+    
+    get_tagging_result = 'SELECT search_schema.get_tagging_result(:tagging_query_id)'
 
-    if existing_tagging_query_id[0][0] == None:
+    previous_tagging_result = db.session.execute(text(get_tagging_result), {'tagging_query_id': existing_tagging_query_id[0][0]}).fetchall()
+
+    if previous_tagging_result[0][0] == None:
         operation_response = {
             "operation_success": True,
             "responsePayload": {
@@ -28,10 +32,6 @@ def get_previous_tagging_result():
         }
         response = make_response(json.dumps(operation_response))
         return response
-    
-    get_tagging_result = 'SELECT search_schema.get_tagging_result(:tagging_query_id)'
-
-    previous_tagging_result = db.session.execute(text(get_tagging_result), {'tagging_query_id': existing_tagging_query_id[0][0]}).fetchall()
 
     previous_tagging_result = json.loads(previous_tagging_result[0][0])
 

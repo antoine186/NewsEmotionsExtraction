@@ -16,6 +16,20 @@ def tagging_search():
     payload = request.data
     payload = json.loads(payload)
 
+    get_user_id = 'SELECT user_schema.get_user_id(:username)'
+
+    user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
+
+    get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
+
+    existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
+
+    if existing_tagging_query_id[0][0] == None:
+        save_tagging_query_sp = 'CALL search_schema.save_tagging_query(:user_id,:tagging_query)'
+        db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
+
+        db.session.commit()
+
     attributes = ('year', 'month', 'day')
 
     search_end_date = datetime.strptime(payload['searchDate'], '%Y-%m-%d')
@@ -43,19 +57,7 @@ def tagging_search():
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
 
-            get_user_id = 'SELECT user_schema.get_user_id(:username)'
-
-            user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
-
-            get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
-
-            existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
-
             if existing_tagging_query_id[0][0] == None:
-                save_tagging_query_sp = 'CALL search_schema.save_tagging_query(:user_id,:tagging_query)'
-                db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
-
-                db.session.commit()
 
                 get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 

@@ -30,6 +30,7 @@ from search.tagging_search_blueprint import tagging_search_blueprint
 from search.get_tagging_inputs_blueprint import get_tagging_inputs_blueprint
 from search.save_tagging_inputs_blueprint import save_tagging_inputs_blueprint
 from search.update_tagging_inputs_blueprint import update_tagging_inputs_blueprint
+from search.get_previous_tagging_result_blueprint import get_previous_tagging_result_blueprint
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(main_page_blueprint)
@@ -56,6 +57,7 @@ app.register_blueprint(tagging_search_blueprint)
 app.register_blueprint(get_tagging_inputs_blueprint)
 app.register_blueprint(save_tagging_inputs_blueprint)
 app.register_blueprint(update_tagging_inputs_blueprint)
+app.register_blueprint(get_previous_tagging_result_blueprint)
 
 with app.app_context():
     db.init_app(app)
