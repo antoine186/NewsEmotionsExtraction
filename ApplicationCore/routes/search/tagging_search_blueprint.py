@@ -52,7 +52,7 @@ def tagging_search():
                                         comparison_start_date, search_start_date)
         emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
         comparison_emo_breakdown_result_metadata = comparison_news_classifier.get_emo_percentage_breakdown_with_leading_results()
-        emo_breakdown_result_metadata.previous_average_emo_breakdown = emo_breakdown_result_metadata.average_emo_breakdown
+        emo_breakdown_result_metadata.previous_average_emo_breakdown = comparison_emo_breakdown_result_metadata.average_emo_breakdown
         
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
