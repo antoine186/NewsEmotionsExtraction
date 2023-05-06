@@ -17,8 +17,18 @@ def get_previous_search_result():
     get_previous_search_result = 'SELECT search_schema.get_previous_search_result(:user_id)'
 
     previous_search_result_json = db.session.execute(text(get_previous_search_result), {'user_id': user_id[0][0]}).fetchall()
-
-    previous_search_result = json.loads(previous_search_result_json[0][0])
+    
+    if previous_search_result_json[0][0] != None:
+        previous_search_result = json.loads(previous_search_result_json[0][0])
+    else:
+        operation_response = {
+        "operation_success": False,
+        "responsePayload": {
+        },
+        "error_message": ""
+        }
+        response = make_response(json.dumps(operation_response))
+        return response
 
     operation_response = {
         "operation_success": True,

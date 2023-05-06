@@ -8,6 +8,10 @@ from gnews import GNews
 from analysis.news_classifier import NewsClassifier
 from app_start_helper import nn, model_max_characters_allowed, keyword_extractor_nn
 from Utils.json_encoder import GenericJsonEncoder
+from flask_mail import Mail, Message
+from threading import Thread
+from app_start_helper import mail
+from Utils.emo_icons import emo_icons
 
 tagging_search_blueprint = Blueprint('tagging_search_blueprint', __name__)
 
@@ -52,6 +56,104 @@ def tagging_search():
         emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
         comparison_emo_breakdown_result_metadata = comparison_news_classifier.get_emo_percentage_breakdown_with_leading_results()
         emo_breakdown_result_metadata.previous_average_emo_breakdown = comparison_emo_breakdown_result_metadata.average_emo_breakdown
+
+        average_emo_breakdown = emo_breakdown_result_metadata.average_emo_breakdown
+        previous_average_emo_breakdown = emo_breakdown_result_metadata.previous_average_emo_breakdown
+
+        average_emo_breakdown = [
+            {'percentage': {
+                'emo': 'anger_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.anger_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.anger_percentage,
+                'percentage_change': 0
+            }},
+            {'percentage': {
+                'emo': 'disgust_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.disgust_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.disgust_percentage,
+                'percentage_change': 0
+            }},
+            {'percentage': {
+                'emo': 'fear_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.fear_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.fear_percentage,
+                'percentage_change': 0
+            }},
+            {'percentage': {
+                'emo': 'joy_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.joy_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.joy_percentage,
+                'percentage_change': 0
+            }},
+            {'percentage': {
+                'emo': 'neutral_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.neutral_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.neutral_percentage,
+                'percentage_change': 0
+            }},
+            {'percentage': {
+                'emo': 'sadness_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.sadness_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.sadness_percentage,
+                'percentage_change': 0
+            }},
+            {'percentage': {
+                'emo': 'surprise_percentage',
+                'current_emo': emo_breakdown_result_metadata.average_emo_breakdown.surprise_percentage,
+                'previous_emo': emo_breakdown_result_metadata.previous_average_emo_breakdown.surprise_percentage,
+                'percentage_change': 0
+            }},
+        ]
+
+        average_emo_breakdown = sorted(average_emo_breakdown, key=lambda x: (x['percentage']['current_emo']), reverse=True)
+
+        email_string = 'Emotional engagement for the tag ' + '\"' + payload['searchInput'] + '\"' + ' has changed: '
+
+        emo_sign1 = ''
+        if average_emo_breakdown[0]['percentage']['percentage_change'] > 0:
+            emo_sign1 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[0]['percentage']['emo']] + ' ' + emo_sign1 + str(average_emo_breakdown[0]['percentage']['percentage_change']) + '%' + ' '
+
+        emo_sign2 = ''
+        if average_emo_breakdown[1]['percentage']['percentage_change'] > 0:
+            emo_sign2 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[1]['percentage']['emo']] + ' ' + emo_sign2 + str(average_emo_breakdown[1]['percentage']['percentage_change']) + '%' + ' '
+
+        emo_sign3 = ''
+        if average_emo_breakdown[2]['percentage']['percentage_change'] > 0:
+            emo_sign3 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[2]['percentage']['emo']] + ' ' + emo_sign3 + str(average_emo_breakdown[2]['percentage']['percentage_change']) + '%' + ' '
+
+        emo_sign4 = ''
+        if average_emo_breakdown[3]['percentage']['percentage_change'] > 0:
+            emo_sign4 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[3]['percentage']['emo']] + ' ' + emo_sign4 + str(average_emo_breakdown[3]['percentage']['percentage_change']) + '%' + ' '
+
+        emo_sign5 = ''
+        if average_emo_breakdown[4]['percentage']['percentage_change'] > 0:
+            emo_sign5 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[4]['percentage']['emo']] + ' ' + emo_sign5 + str(average_emo_breakdown[4]['percentage']['percentage_change']) + '%' + ' '
+
+        emo_sign6 = ''
+        if average_emo_breakdown[5]['percentage']['percentage_change'] > 0:
+            emo_sign6 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[5]['percentage']['emo']] + ' ' + emo_sign6 + str(average_emo_breakdown[5]['percentage']['percentage_change']) + '%' + ' '
+
+        emo_sign7 = ''
+        if average_emo_breakdown[6]['percentage']['percentage_change'] > 0:
+            emo_sign7 = '+'
+        email_string = email_string + emo_icons[average_emo_breakdown[6]['percentage']['emo']] + ' ' + emo_sign7 + str(average_emo_breakdown[6]['percentage']['percentage_change']) + '%' + ' '
+
+        msg = Message()
+        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+        msg.recipients = [payload['username']]
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = email_string
+
+        Thread(target=mail.send(msg)).start()
+
+        for i in range(len(average_emo_breakdown)):
+            average_emo_breakdown[i]['percentage']['percentage_change'] = (average_emo_breakdown[i]['percentage']['current_emo'] - average_emo_breakdown[i]['percentage']['previous_emo']) / average_emo_breakdown[i]['percentage']['previous_emo']
         
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
