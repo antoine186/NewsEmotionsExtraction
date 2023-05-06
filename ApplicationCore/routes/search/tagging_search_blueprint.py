@@ -28,11 +28,11 @@ def tagging_search():
         save_tagging_query_sp = 'CALL search_schema.save_tagging_query(:user_id,:tagging_query)'
         db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
 
+        db.session.commit()
+
         get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 
         existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
-
-        db.session.commit()
 
         attributes = ('year', 'month', 'day')
 

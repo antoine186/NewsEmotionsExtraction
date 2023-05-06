@@ -4,6 +4,7 @@ sys.path.append('ApplicationCore/routes')
 sys.path.append('ApplicationCore/scheduled_jobs')
 from scheduled_jobs.session_kick import session_kick
 from scheduled_jobs.apscheduler_start_cleanup import apscheduler_start_cleanup
+from scheduled_jobs.tagging_update import tagging_update
 
 from app_start_helper import app, db
 from main_pages.main_page_blueprint import main_page_blueprint
@@ -67,6 +68,7 @@ with app.app_context():
     db.init_app(app)
 
     session_kick()
+    tagging_update()
     apscheduler_start_cleanup()
 
 if __name__ == '__main__':
