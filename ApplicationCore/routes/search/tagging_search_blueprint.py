@@ -105,6 +105,9 @@ def tagging_search():
             }},
         ]
 
+        for i in range(len(average_emo_breakdown)):
+            average_emo_breakdown[i]['percentage']['percentage_change'] = round((average_emo_breakdown[i]['percentage']['current_emo'] - average_emo_breakdown[i]['percentage']['previous_emo']) / average_emo_breakdown[i]['percentage']['previous_emo'], 2)
+
         average_emo_breakdown = sorted(average_emo_breakdown, key=lambda x: (x['percentage']['current_emo']), reverse=True)
 
         email_string = 'Emotional engagement for the tag ' + '\"' + payload['searchInput'] + '\"' + ' has changed: '
@@ -142,7 +145,9 @@ def tagging_search():
         emo_sign7 = ''
         if average_emo_breakdown[6]['percentage']['percentage_change'] > 0:
             emo_sign7 = '+'
-        email_string = email_string + emo_icons[average_emo_breakdown[6]['percentage']['emo']] + ' ' + emo_sign7 + str(average_emo_breakdown[6]['percentage']['percentage_change']) + '%' + ' '
+        email_string = email_string + emo_icons[average_emo_breakdown[6]['percentage']['emo']] + ' ' + emo_sign7 + str(average_emo_breakdown[6]['percentage']['percentage_change']) + '%' + '. '
+
+        email_string = email_string + 'Please login to your Emotional Machines account to check out the rest!'
 
         msg = Message()
         msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
@@ -151,9 +156,6 @@ def tagging_search():
         msg.body = email_string
 
         Thread(target=mail.send(msg)).start()
-
-        for i in range(len(average_emo_breakdown)):
-            average_emo_breakdown[i]['percentage']['percentage_change'] = (average_emo_breakdown[i]['percentage']['current_emo'] - average_emo_breakdown[i]['percentage']['previous_emo']) / average_emo_breakdown[i]['percentage']['previous_emo']
         
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
