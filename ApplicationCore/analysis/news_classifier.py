@@ -103,5 +103,5 @@ class NewsClassifier:
         
             return emo_breakdown_result_metadata
 
-        except:
+        except Exception as e:
             return None

@@ -22,25 +22,27 @@ def get_previous_tagging_result():
 
     previous_tagging_result = db.session.execute(text(get_tagging_result), {'tagging_query_id': existing_tagging_query_id[0][0]}).fetchall()
 
-    if previous_tagging_result[0][0] == None:
+    if previous_tagging_result[0][0] != None:
+        if previous_tagging_result[0][0] == 'No results':
+            previous_tagging_result = previous_tagging_result[0][0]
+        else:
+            previous_tagging_result = json.loads(previous_tagging_result[0][0])
+
         operation_response = {
             "operation_success": True,
             "responsePayload": {
-                "previous_tagging_result": 'Still Tagging'
+                "previous_search_result": previous_tagging_result
             },
             "error_message": ""
         }
         response = make_response(json.dumps(operation_response))
         return response
-
-    previous_tagging_result = json.loads(previous_tagging_result[0][0])
-
-    operation_response = {
-        "operation_success": True,
-        "responsePayload": {
-            "previous_search_result": previous_tagging_result
-        },
-        "error_message": ""
-    }
-    response = make_response(json.dumps(operation_response))
-    return response
+    else:
+        operation_response = {
+            "operation_success": False,
+            "responsePayload": {
+            },
+            "error_message": ""
+        }
+        response = make_response(json.dumps(operation_response))
+        return response
