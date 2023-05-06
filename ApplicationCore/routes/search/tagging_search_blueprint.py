@@ -106,7 +106,7 @@ def tagging_search():
         ]
 
         for i in range(len(average_emo_breakdown)):
-            average_emo_breakdown[i]['percentage']['percentage_change'] = round((average_emo_breakdown[i]['percentage']['current_emo'] - average_emo_breakdown[i]['percentage']['previous_emo']) / average_emo_breakdown[i]['percentage']['previous_emo'], 2)
+            average_emo_breakdown[i]['percentage']['percentage_change'] = round(((average_emo_breakdown[i]['percentage']['current_emo'] - average_emo_breakdown[i]['percentage']['previous_emo']) / average_emo_breakdown[i]['percentage']['previous_emo']) * 100, 2)
 
         average_emo_breakdown = sorted(average_emo_breakdown, key=lambda x: (x['percentage']['current_emo']), reverse=True)
 
