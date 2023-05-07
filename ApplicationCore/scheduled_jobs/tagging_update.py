@@ -15,10 +15,10 @@ from threading import Thread
 from app_start_helper import mail
 from Utils.emo_icons import emo_icons
 
-number_of_seconds = 3600
+number_of_seconds = 3600 * 24
 
 def tagging_update():
-    scheduler.add_job(func=tagging_periodic_update, trigger="interval", seconds=600)
+    scheduler.add_job(func=tagging_periodic_update, trigger="interval", seconds=number_of_seconds)
 
 def tagging_periodic_update():
     with app.app_context():

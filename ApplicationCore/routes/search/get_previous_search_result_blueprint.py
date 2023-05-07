@@ -22,10 +22,10 @@ def get_previous_search_result():
         previous_search_result = json.loads(previous_search_result_json[0][0])
     else:
         operation_response = {
-        "operation_success": False,
-        "responsePayload": {
-        },
-        "error_message": ""
+            "operation_success": False,
+            "responsePayload": {
+            },
+            "error_message": ""
         }
         response = make_response(json.dumps(operation_response))
         return response

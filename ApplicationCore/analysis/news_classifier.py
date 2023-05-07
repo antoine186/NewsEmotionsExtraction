@@ -68,6 +68,7 @@ class NewsClassifier:
                     raw_extracted_keywords = self.keyword_extractor_nn.nn_model.extract_keywords(article.text, keyphrase_ngram_range=(1, 2), stop_words=None)
 
                     extracted_keywords = raw_extracted_keywords
+                    extracted_keywords.sort(key=lambda word_pair: word_pair[1], reverse = True)
 
                     emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
 
@@ -93,8 +94,6 @@ class NewsClassifier:
                     emo_breakdown_results.append(emo_breakdown_result)
 
                     result_counter += 1
-
-            extracted_keywords.sort(key=lambda word_pair: word_pair[1], reverse = True)
 
             emo_breakdown_result_metadata = EmoBreakdownResultMetadata(emo_breakdown_results, nb_articles_skipped, emo_breakdown_average, emo_breakdown_results[most_emo_dict['anger']['index']], 
                  emo_breakdown_results[most_emo_dict['disgust']['index']], emo_breakdown_results[most_emo_dict['sadness']['index']], emo_breakdown_results[most_emo_dict['joy']['index']], 
