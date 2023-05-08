@@ -59,7 +59,10 @@ def linking_topics():
 
         linking_emo_breakdown_result_metadata_dict = {
             "emo_breakdown_average": emo_breakdown_average,
-            "topic_linking_results": topic_linking_results
+            "topic_linking_results": topic_linking_results,
+            "linkingInput1": payload['linkingInput1'],
+            "linkingInput2": payload['linkingInput2'],
+            "dateInput": payload['dateInput']
         }
 
         linking_emo_breakdown_result_metadata_dict_json_data = json.dumps(linking_emo_breakdown_result_metadata_dict, indent=4, cls=GenericJsonEncoder)
@@ -73,7 +76,7 @@ def linking_topics():
         operation_response = {
             "operation_success": True,
             "responsePayload": {
-                "linking_emo_breakdown_result_metadata_dict": linking_emo_breakdown_result_metadata_dict
+                "linking_emo_breakdown_result_metadata_dict_json_data": linking_emo_breakdown_result_metadata_dict_json_data
             },
             "error_message": ""
         }
