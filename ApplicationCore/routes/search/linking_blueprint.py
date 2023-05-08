@@ -22,12 +22,6 @@ def linking_topics():
 
         user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
 
-        delete_linking_result_sp = 'CALL search_schema.delete_linking_result(:user_id)'
-
-        db.session.execute(text(delete_linking_result_sp), {'user_id': user_id[0][0]})
-
-        db.session.commit()
-
         attributes = ('year', 'month', 'day')
 
         search_end_date = datetime.strptime(payload['dateInput'], '%Y-%m-%d')
@@ -42,7 +36,13 @@ def linking_topics():
 
         results_topic_2 = google_news.get_news(payload['linkingInput2'])
 
-        topic_linker = TopicLinker(nn, results_topic_1, results_topic_2, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['linkingInput1'] + ' ' + payload['linkingInput2'], \
+        results_topic_1.append(results_topic_2)
+
+        google_news_seed = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date, max_results = 5)
+
+        results_seed = google_news_seed.get_news(payload['linkingInput1'] + ' ' + payload['linkingInput2'])
+
+        topic_linker = TopicLinker(nn, results_seed, results_topic_1, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['linkingInput1'] + ' ' + payload['linkingInput2'], \
                                         search_start_date, search_end_date)
         topic_linking_results = topic_linker.find_linkage()
 
@@ -66,6 +66,12 @@ def linking_topics():
         }
 
         linking_emo_breakdown_result_metadata_dict_json_data = json.dumps(linking_emo_breakdown_result_metadata_dict, indent=4, cls=GenericJsonEncoder)
+
+        delete_linking_result_sp = 'CALL search_schema.delete_linking_result(:user_id)'
+
+        db.session.execute(text(delete_linking_result_sp), {'user_id': user_id[0][0]})
+
+        db.session.commit()
 
         add_linking_result_sp = 'CALL search_schema.add_linking_result(:user_id,:previous_linking_result)'
 
