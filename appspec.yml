@@ -5,10 +5,10 @@ files:
    destination: /home/ubuntu/NewsEmotionsExtraction
 hooks:
   AfterInstall:
-   - location: install_app_dependencies
+   - location: /home/ubuntu/NewsEmotionsExtraction/install_app_dependencies
      timeout: 300
      runas: root
   ApplicationStart:
-   - location: start_server
+   - location: /home/ubuntu/NewsEmotionsExtraction/start_server
      timeout: 300
      runas: root
