@@ -15,6 +15,8 @@ jobs:
         with:
           python-version: 3.10.6
       # Step 3
+      - name: Install wheel
+        run: pip install wheel
       - name: Install dependencies
         run: pip install -r requirements.txt
       # Step 4
