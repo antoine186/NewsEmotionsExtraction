@@ -3,6 +3,12 @@ os: linux
 files:
  - source: .
    destination: /home/ubuntu/NewsEmotionsExtraction
+permissions:
+  - object: /home/ubuntu/NewsEmotionsExtraction
+    mode: 755
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
 hooks:
   AfterInstall:
    - location: /home/ubuntu/NewsEmotionsExtraction/install_app_dependencies.sh
