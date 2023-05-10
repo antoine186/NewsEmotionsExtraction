@@ -11,10 +11,10 @@ permissions:
     group: ubuntu
 hooks:
   AfterInstall:
-   - location: /home/ubuntu/NewsEmotionsExtraction/installing_dependencies.sh
+   - location: installing_dependencies.sh
      timeout: 300
      runas: root
   ApplicationStart:
-   - location: /home/ubuntu/NewsEmotionsExtraction/start_server.sh
+   - location: start_server.sh
      timeout: 300
      runas: root
