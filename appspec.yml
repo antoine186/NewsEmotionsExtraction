@@ -11,7 +11,7 @@ permissions:
     group: ubuntu
 hooks:
   AfterInstall:
-   - location: /home/ubuntu/NewsEmotionsExtraction/install_app_dependencies.sh
+   - location: /home/ubuntu/NewsEmotionsExtraction/install_dependencies.sh
      timeout: 300
      runas: root
   ApplicationStart:
