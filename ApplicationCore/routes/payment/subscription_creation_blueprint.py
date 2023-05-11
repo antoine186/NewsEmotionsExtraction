@@ -61,7 +61,7 @@ def subscription_create():
             "operation_success": False,
             "responsePayload": {
             },
-            "error_message": str(e) 
+            "error_message": 'We are here' 
         }
         response = make_response(json.dumps(operation_response))
         return response
