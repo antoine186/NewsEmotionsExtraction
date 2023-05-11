@@ -42,6 +42,7 @@ def login():
         response.set_cookie('user_session_cookie', json.dumps(session_token), max_age = seconds, samesite = None , secure = True, httponly = True)
         # response.headers['Access-Control-Allow-Origin'] = 'http://localhost/'
         response.headers['Access-Control-Allow-Origin'] = 'http://www.emomachines.xyz'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
 
         return response
 
