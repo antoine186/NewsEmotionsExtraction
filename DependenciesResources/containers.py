@@ -1,8 +1,8 @@
 """Containers module."""
 from dependency_injector import containers, providers
 from .resources_paths import *
-from NeuralNetworks.PipelineBasedNeuralNetwork import PipelineBasedNeuralNetwork
-from NeuralNetworks.KeywordExtractorNeuralNetwork import KeywordExtractorNeuralNetwork
+from neural_networks.PipelineBasedNeuralNetwork import PipelineBasedNeuralNetwork
+from neural_networks.KeywordExtractorNeuralNetwork import KeywordExtractorNeuralNetwork
 from transformers import pipeline
 from keybert import KeyBERT
 
