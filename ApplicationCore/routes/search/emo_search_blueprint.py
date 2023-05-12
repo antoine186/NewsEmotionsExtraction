@@ -25,6 +25,7 @@ def emo_search():
         search_end_date = attrgetter(*attributes)(search_end_date)
         search_start_date = attrgetter(*attributes)(search_start_date)
 
+        """
         google_news = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date, max_results = 20)
         results = google_news.get_news(payload['searchInput'])
 
@@ -54,6 +55,10 @@ def emo_search():
             response = make_response(emo_breakdown_result_metadata_json_data)
         else:
             response = make_response(json.dumps('Error'))
+
+        return response
+        """
+        response = make_response(json.dumps('Ok'))
 
         return response
     
