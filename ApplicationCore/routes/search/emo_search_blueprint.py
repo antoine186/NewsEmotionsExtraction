@@ -34,8 +34,6 @@ def emo_search():
         
         emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
 
-        """
-
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
 
@@ -58,10 +56,6 @@ def emo_search():
             response = make_response(emo_breakdown_result_metadata_json_data)
         else:
             response = make_response(json.dumps('Error'))
-
-        return response
-        """
-        response = make_response(json.dumps('Ok'))
 
         return response
     
