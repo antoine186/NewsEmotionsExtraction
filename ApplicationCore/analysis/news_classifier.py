@@ -69,7 +69,6 @@ class NewsClassifier:
                         article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_percentage, extracted_keywords)
                     emo_breakdown_results.append(emo_breakdown_result)
                     result_counter += 1
-                    """
                 else:
                     tranches_list = text_divider(article.text, self.model_max_characters_allowed)
 
@@ -90,8 +89,6 @@ class NewsClassifier:
                  self.search_input, self.search_start_date, self.search_end_date, '')
         
             return emo_breakdown_result_metadata
-            """
-            return ''
 
         except Exception as e:
             return None
