@@ -32,8 +32,9 @@ def emo_search():
         news_classifier = NewsClassifier(nn, results, google_news, model_max_characters_allowed, keyword_extractor_nn, payload['searchInput'], \
                                         search_start_date, search_end_date)
         
-        """
         emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
+
+        """
 
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)

@@ -49,18 +49,9 @@ class NewsClassifier:
                 if (article == None):
                     nb_articles_skipped += 1
                     continue
-
+                    
+                    """
                 if len(article.text) < self.model_max_characters_allowed:
-                    """
-                    input_ids = self.main_emo_classification_nn_tokenizer.encode(
-                        article.text, return_tensors='pt')
-                    output = self.main_emo_classification_nn_model.generate(
-                        input_ids=input_ids)
-
-                    decoded = [self.main_emo_classification_nn_tokenizer.decode(ids) for ids in output]
-                    label = decoded[0]
-                    """
-
                     raw_emo_breakdown = self.main_emo_classification_nn_model(
                         article.text)
                     emo_breakdown = raw_emo_breakdown[0]
@@ -101,6 +92,8 @@ class NewsClassifier:
                  self.search_input, self.search_start_date, self.search_end_date, '')
         
             return emo_breakdown_result_metadata
+            """
+            return ''
 
         except Exception as e:
             return None
