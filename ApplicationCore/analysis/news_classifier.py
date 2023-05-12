@@ -7,6 +7,7 @@ from analysis.analytical_utils.get_emo_breakdown_percentage import get_emo_break
 from analysis.analytical_utils.get_emo_breakdown_from_tranches import get_emo_breakdown_from_tranches
 from analytical_classes.emo_breakdown_result_metadata import EmoBreakdownResultMetadata
 from analysis.analytical_utils.update_emo_breakdown_average import update_emo_breakdown_average
+import gc
 
 
 class NewsClassifier:
@@ -91,4 +92,5 @@ class NewsClassifier:
             return emo_breakdown_result_metadata
 
         except Exception as e:
+            gc.collect()
             return None

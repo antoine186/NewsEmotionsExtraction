@@ -14,15 +14,18 @@ from flask_mail import Mail, Message
 from threading import Thread
 from app_start_helper import mail
 from Utils.emo_icons import emo_icons
+import gc
 
 number_of_seconds = 3600 * 24
 
 def tagging_update():
+    gc.collect()
     scheduler.add_job(func=tagging_periodic_update, trigger="interval", seconds=number_of_seconds)
 
 def tagging_periodic_update():
     with app.app_context():
         try:
+            gc.collect()
             all_tagging_input = TaggingInput.query.all()
 
             for i in range(len(all_tagging_input)):
@@ -117,6 +120,8 @@ def tagging_periodic_update():
                     }},
                 ]
 
+                gc.collect()
+
                 for i in range(len(average_emo_breakdown)):
                     average_emo_breakdown[i]['percentage']['percentage_change'] = round(((average_emo_breakdown[i]['percentage']['current_emo'] - average_emo_breakdown[i]['percentage']['previous_emo']) / average_emo_breakdown[i]['percentage']['previous_emo']) * 100, 2)
 
@@ -169,5 +174,8 @@ def tagging_periodic_update():
 
                 Thread(target=mail.send(msg)).start()
 
+                gc.collect()
+
         except Exception as e:
+            gc.collect()
             print(e)
