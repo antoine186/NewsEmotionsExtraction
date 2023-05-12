@@ -56,13 +56,12 @@ class NewsClassifier:
                     emo_breakdown = raw_emo_breakdown[0]
 
                     raw_extracted_keywords = self.keyword_extractor_nn.nn_model.extract_keywords(article.text, keyphrase_ngram_range=(1, 2), stop_words=None)
-                    """
 
                     extracted_keywords = raw_extracted_keywords
                     extracted_keywords.sort(key=lambda word_pair: word_pair[1], reverse = True)
 
                     emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
-
+                    """
                     if emo_breakdown_average == None:
                         emo_breakdown_average = emo_breakdown_percentage
                     else:
