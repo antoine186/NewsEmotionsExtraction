@@ -65,11 +65,11 @@ class NewsClassifier:
                         emo_breakdown_average = emo_breakdown_percentage
                     else:
                         emo_breakdown_average = update_emo_breakdown_average(emo_breakdown_percentage, emo_breakdown_average, result_counter)
-                    """
                     emo_breakdown_result = EmoBreakdownResult(
                         article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_percentage, extracted_keywords)
                     emo_breakdown_results.append(emo_breakdown_result)
                     result_counter += 1
+                    """
                 else:
                     tranches_list = text_divider(article.text, self.model_max_characters_allowed)
 
