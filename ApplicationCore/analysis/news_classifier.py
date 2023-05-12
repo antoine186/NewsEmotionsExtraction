@@ -61,12 +61,11 @@ class NewsClassifier:
                     extracted_keywords.sort(key=lambda word_pair: word_pair[1], reverse = True)
 
                     emo_breakdown_percentage, most_emo_dict = get_emo_breakdown_percentage(emo_breakdown, result_counter, most_emo_dict)
-                    """
                     if emo_breakdown_average == None:
                         emo_breakdown_average = emo_breakdown_percentage
                     else:
                         emo_breakdown_average = update_emo_breakdown_average(emo_breakdown_percentage, emo_breakdown_average, result_counter)
-
+                    """
                     emo_breakdown_result = EmoBreakdownResult(
                         article.title, result['description'], result['publisher']['title'], result['published date'], article.canonical_link, emo_breakdown_percentage, extracted_keywords)
                     emo_breakdown_results.append(emo_breakdown_result)
