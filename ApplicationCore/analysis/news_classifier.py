@@ -50,13 +50,13 @@ class NewsClassifier:
                     nb_articles_skipped += 1
                     continue
                     
-                    """
                 if len(article.text) < self.model_max_characters_allowed:
                     raw_emo_breakdown = self.main_emo_classification_nn_model(
                         article.text)
                     emo_breakdown = raw_emo_breakdown[0]
 
                     raw_extracted_keywords = self.keyword_extractor_nn.nn_model.extract_keywords(article.text, keyphrase_ngram_range=(1, 2), stop_words=None)
+                    """
 
                     extracted_keywords = raw_extracted_keywords
                     extracted_keywords.sort(key=lambda word_pair: word_pair[1], reverse = True)
