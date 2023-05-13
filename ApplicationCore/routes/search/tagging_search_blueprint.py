@@ -21,6 +21,12 @@ def tagging_search():
     payload = json.loads(payload)
 
     try:
+        msg = Message()
+        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+        msg.recipients = [payload['username']]
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = 'Were in tagging search'
+
         get_user_id = 'SELECT user_schema.get_user_id(:username)'
 
         user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
@@ -29,12 +35,6 @@ def tagging_search():
         db.session.execute(text(save_tagging_query_sp), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']})
 
         db.session.commit()
-
-        msg = Message()
-        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
-        msg.recipients = [payload['username']]
-        msg.sender = 'noreply@emomachines.xyz'
-        msg.body = 'Were in tagging search'
 
         get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 
