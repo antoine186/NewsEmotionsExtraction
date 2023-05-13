@@ -178,4 +178,9 @@ def tagging_periodic_update():
 
         except Exception as e:
             gc.collect()
-            print(e)
+            
+            msg = Message()
+            msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+            msg.recipients = [payload['username']]
+            msg.sender = 'noreply@emomachines.xyz'
+            msg.body = str(e)

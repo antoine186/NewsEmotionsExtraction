@@ -172,8 +172,20 @@ def tagging_search():
 
             db.session.commit()
 
+            msg = Message()
+            msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+            msg.recipients = [payload['username']]
+            msg.sender = 'noreply@emomachines.xyz'
+            msg.body = emo_breakdown_result_metadata_json_data
+
         response = make_response(json.dumps(True))
     except Exception as e:
+        msg = Message()
+        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+        msg.recipients = [payload['username']]
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = str(e)
+
         emo_breakdown_result_metadata_json_data = 'No results'
 
         save_tagging_result_sp = 'CALL search_schema.save_tagging_result(:tagging_query_id,:tagging_result_json)'

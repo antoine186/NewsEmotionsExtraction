@@ -2,7 +2,6 @@ server {
 	server_name emomachinesbackend.xyz www.emomachinesbackend.xyz;
 
 	location /api {
-		add_header 'Access-Control-Allow-Origin' "$http_origin"
 		add_header 'Access-Control-Allow-Origin' "$http_origin" always;
         	add_header 'Access-Control-Allow-Credentials' 'true' always;
         	add_header 'Access-Control-Allow-Headers' "Origin, X-Requested-With, Content-Type, Accept" always;
