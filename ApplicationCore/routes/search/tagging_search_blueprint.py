@@ -30,6 +30,12 @@ def tagging_search():
 
         db.session.commit()
 
+        msg = Message()
+        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+        msg.recipients = [payload['username']]
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = 'Were in tagging search'
+
         get_existing_tagging_query_id = 'SELECT search_schema.get_existing_tagging_query_id(:user_id,:tagging_query)'
 
         existing_tagging_query_id = db.session.execute(text(get_existing_tagging_query_id), {'user_id': user_id[0][0], 'tagging_query': payload['searchInput']}).fetchall()
@@ -149,7 +155,7 @@ def tagging_search():
 
         email_string = email_string + 'Please login to your Emotional Machines account to check out the rest!'
 
-        msg = Message()
+        #msg = Message()
         msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
         msg.recipients = [payload['username']]
         msg.sender = 'noreply@emomachines.xyz'
@@ -172,7 +178,7 @@ def tagging_search():
 
             db.session.commit()
 
-            msg = Message()
+            #msg = Message()
             msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
             msg.recipients = [payload['username']]
             msg.sender = 'noreply@emomachines.xyz'
@@ -180,7 +186,7 @@ def tagging_search():
 
         response = make_response(json.dumps(True))
     except Exception as e:
-        msg = Message()
+        #msg = Message()
         msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
         msg.recipients = [payload['username']]
         msg.sender = 'noreply@emomachines.xyz'
