@@ -21,12 +21,6 @@ def tagging_search():
     payload = json.loads(payload)
 
     try:
-        msg = Message()
-        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
-        msg.recipients = [payload['username']]
-        msg.sender = 'noreply@emomachines.xyz'
-        msg.body = 'Were in tagging search'
-
         get_user_id = 'SELECT user_schema.get_user_id(:username)'
 
         user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
@@ -155,12 +149,11 @@ def tagging_search():
 
         email_string = email_string + 'Please login to your Emotional Machines account to check out the rest!'
 
-        # Keep this
-        #msg = Message()
-        #msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
-        #msg.recipients = [payload['username']]
-        #msg.sender = 'noreply@emomachines.xyz'
-        #msg.body = email_string
+        msg = Message()
+        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+        msg.recipients = [payload['username']]
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = email_string
 
         Thread(target=mail.send(msg)).start()
         
@@ -179,19 +172,23 @@ def tagging_search():
 
             db.session.commit()
 
-            #msg = Message()
-            #msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
-            #msg.recipients = [payload['username']]
-            #msg.sender = 'noreply@emomachines.xyz'
-            #msg.body = emo_breakdown_result_metadata_json_data
+            msg = Message()
+            msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+            msg.recipients = [payload['username']]
+            msg.sender = 'noreply@emomachines.xyz'
+            msg.body = emo_breakdown_result_metadata_json_data
+
+            Thread(target=mail.send(msg)).start()
 
         response = make_response(json.dumps(True))
     except Exception as e:
-        #msg = Message()
-        #msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
-        #msg.recipients = [payload['username']]
-        #msg.sender = 'noreply@emomachines.xyz'
-        #msg.body = str(e)
+        msg = Message()
+        msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+        msg.recipients = [payload['username']]
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = str(e)
+
+        Thread(target=mail.send(msg)).start()
 
         emo_breakdown_result_metadata_json_data = 'No results'
 
