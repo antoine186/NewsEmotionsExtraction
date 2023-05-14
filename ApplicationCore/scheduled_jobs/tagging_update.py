@@ -4,7 +4,7 @@ from sqlalchemy import text
 from app_start_helper import app
 import json
 from models.tagging_input import TaggingInput
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from operator import attrgetter
 from gnews import GNews
 from analysis.news_classifier import NewsClassifier
@@ -15,7 +15,11 @@ from threading import Thread
 from app_start_helper import mail
 from Utils.emo_icons import emo_icons
 
+# This for prod
 number_of_seconds = 3600 * 24
+
+# This for testing
+# number_of_seconds = 60 * 5
 
 def tagging_update():
     scheduler.add_job(func=tagging_periodic_update, trigger="interval", seconds=number_of_seconds)
@@ -24,6 +28,8 @@ def tagging_periodic_update():
     with app.app_context():
         try:
             all_tagging_input = TaggingInput.query.all()
+
+            username = ''
 
             for i in range(len(all_tagging_input)):
                 try:
@@ -37,8 +43,25 @@ def tagging_periodic_update():
 
                     attributes = ('year', 'month', 'day')
 
-                    search_end_date = datetime.strptime(search_inputs[0]['searchDate'], '%Y-%m-%d')
-                    search_start_date = datetime.strptime(search_inputs[0]['dayBeforeSearchDate'], '%Y-%m-%d')
+                    today = date.today()
+                    yesterday = today - timedelta(days = 1)
+
+                    search_end_date = today
+                    search_start_date = yesterday
+
+                    search_inputs[0]['searchDate'] = str(search_end_date)
+                    search_inputs[0]['dayBeforeSearchDate'] = str(search_start_date)
+
+                    tagging_input_list_json = json.dumps(search_inputs, indent=4, cls=GenericJsonEncoder)
+
+                    update_tagging_input_sp = 'CALL search_schema.update_tagging_input(:user_id,:tagging_input_list)'
+
+                    db.session.execute(text(update_tagging_input_sp), {'user_id': user_id, 'tagging_input_list': tagging_input_list_json})
+
+                    db.session.commit()
+
+                    # search_end_date = datetime.strptime(search_inputs[0]['searchDate'], '%Y-%m-%d')
+                    # search_start_date = datetime.strptime(search_inputs[0]['dayBeforeSearchDate'], '%Y-%m-%d')
                     comparison_start_date = search_start_date - timedelta(days=1)
 
                     search_end_date = attrgetter(*attributes)(search_end_date)
@@ -177,6 +200,16 @@ def tagging_periodic_update():
                     msg.sender = 'noreply@emomachines.xyz'
                     msg.body = str(e)
 
+                    Thread(target=mail.send(msg)).start()
+
+                    msg2 = Message()
+                    msg2.subject = "Daily Tag Update for " + '\"' + search_inputs[0]['searchInput'] + '\"'
+                    msg2.recipients = [username[0][0]]
+                    msg2.sender = 'noreply@emomachines.xyz'
+                    msg2.body = 'Not enough results for the past day. Will resume notifications from tomorrow on.'
+
+                    Thread(target=mail.send(msg2)).start()
+
         except Exception as e:
             
             msg = Message()
@@ -184,3 +217,13 @@ def tagging_periodic_update():
             msg.recipients = ['antoine186@hotmail.com']
             msg.sender = 'noreply@emomachines.xyz'
             msg.body = str(e)
+
+            Thread(target=mail.send(msg)).start()
+
+            msg2 = Message()
+            msg2.subject = "Daily Tag Update for " + '\"' + search_inputs[0]['searchInput'] + '\"'
+            msg2.recipients = [username[0][0]]
+            msg2.sender = 'noreply@emomachines.xyz'
+            msg2.body = 'Something is wrong with our notification system. We will fix this as soon as humanly possible!'
+
+            Thread(target=mail.send(msg2)).start()

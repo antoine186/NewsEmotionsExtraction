@@ -55,6 +55,16 @@ def tagging_search():
                                         comparison_start_date, search_start_date)
         emo_breakdown_result_metadata = news_classifier.get_emo_percentage_breakdown_with_leading_results()
         comparison_emo_breakdown_result_metadata = comparison_news_classifier.get_emo_percentage_breakdown_with_leading_results()
+
+        if emo_breakdown_result_metadata == None or comparison_emo_breakdown_result_metadata == None:
+            msg = Message()
+            msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
+            msg.recipients = [payload['username']]
+            msg.sender = 'noreply@emomachines.xyz'
+            msg.body = 'Not enough new results from yesterday.Skipping tagging for today...'
+
+            Thread(target=mail.send(msg)).start()
+
         emo_breakdown_result_metadata.previous_average_emo_breakdown = comparison_emo_breakdown_result_metadata.average_emo_breakdown
 
         average_emo_breakdown = emo_breakdown_result_metadata.average_emo_breakdown

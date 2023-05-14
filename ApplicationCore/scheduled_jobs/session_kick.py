@@ -3,6 +3,7 @@ from app_start_helper import db
 from sqlalchemy import text
 from app_start_helper import app
 
+# This for prod
 number_of_seconds = 3600
 
 def session_kick():

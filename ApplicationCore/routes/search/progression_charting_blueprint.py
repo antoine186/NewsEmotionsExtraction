@@ -50,7 +50,7 @@ def progression_charting():
         operation_response = {
             "operation_success": True,
             "responsePayload": {
-                "emo_breakdown_result_metadata_dict": emo_breakdown_result_metadata_dict
+                "emo_breakdown_result_metadata_dict": json.loads(emo_breakdown_result_metadata_dict_json_data)
             },
             "error_message": ""
         }
