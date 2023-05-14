@@ -184,7 +184,7 @@ def tagging_search():
     except Exception as e:
         msg = Message()
         msg.subject = "Daily Tag Update for " + '\"' + payload['searchInput'] + '\"'
-        msg.recipients = [payload['username']]
+        msg.recipients = ['antoine186@hotmail.com']
         msg.sender = 'noreply@emomachines.xyz'
         msg.body = str(e)
 

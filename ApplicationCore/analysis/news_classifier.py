@@ -7,8 +7,6 @@ from analysis.analytical_utils.get_emo_breakdown_percentage import get_emo_break
 from analysis.analytical_utils.get_emo_breakdown_from_tranches import get_emo_breakdown_from_tranches
 from analytical_classes.emo_breakdown_result_metadata import EmoBreakdownResultMetadata
 from analysis.analytical_utils.update_emo_breakdown_average import update_emo_breakdown_average
-import gc
-
 
 class NewsClassifier:
     def __init__(self, nn, search_results, google_news, model_max_characters_allowed, keyword_extractor_nn, search_input, \
@@ -92,5 +90,4 @@ class NewsClassifier:
             return emo_breakdown_result_metadata
 
         except Exception as e:
-            gc.collect()
             return None

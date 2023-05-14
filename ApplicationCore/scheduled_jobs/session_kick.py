@@ -2,7 +2,6 @@ from app_start_helper import scheduler
 from app_start_helper import db
 from sqlalchemy import text
 from app_start_helper import app
-import gc
 
 number_of_seconds = 3600
 
@@ -16,4 +15,3 @@ def session_kick_job():
         db.session.execute(text(auto_delete_user_session_sp))
 
         db.session.commit()
-        gc.collect()

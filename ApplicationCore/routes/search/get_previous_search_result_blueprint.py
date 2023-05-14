@@ -2,7 +2,6 @@ from flask import Blueprint, request, make_response
 import json
 from app_start_helper import db
 from sqlalchemy import text
-import gc
 
 get_previous_search_result_blueprint = Blueprint('get_previous_search_result_blueprint', __name__)
 
@@ -11,8 +10,6 @@ def get_previous_search_result():
     try:
         payload = request.data
         payload = json.loads(payload)
-
-        gc.collect()
 
         get_user_id = 'SELECT user_schema.get_user_id(:username)'
 
@@ -32,7 +29,6 @@ def get_previous_search_result():
                 "error_message": ""
             }
             response = make_response(json.dumps(operation_response))
-            gc.collect()
             return response
 
         operation_response = {
@@ -43,7 +39,6 @@ def get_previous_search_result():
             "error_message": ""
         }
         response = make_response(json.dumps(operation_response))
-        gc.collect()
         return response
     
     except Exception as e:
@@ -54,5 +49,4 @@ def get_previous_search_result():
             "error_message": ""
         }
         response = make_response(json.dumps(operation_response))
-        gc.collect()
         return response

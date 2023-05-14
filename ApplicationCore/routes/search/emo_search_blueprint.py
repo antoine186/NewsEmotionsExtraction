@@ -8,7 +8,6 @@ from analysis.news_classifier import NewsClassifier
 from Utils.json_encoder import GenericJsonEncoder
 from app_start_helper import db
 from sqlalchemy import text
-import gc
 
 emo_search_blueprint = Blueprint('emo_search_blueprint', __name__)
 
@@ -17,8 +16,6 @@ def emo_search():
     try:
         payload = request.data
         payload = json.loads(payload)
-
-        gc.collect()
 
         attributes = ('year', 'month', 'day')
 
@@ -56,16 +53,13 @@ def emo_search():
 
             db.session.commit()
 
-            gc.collect()
             response = make_response(emo_breakdown_result_metadata_json_data)
         else:
-            gc.collect()
             response = make_response(json.dumps('Error'))
 
         return response
     
     except Exception as e:
-        gc.collect()
         response = make_response(json.dumps('Error'))
 
         return response
