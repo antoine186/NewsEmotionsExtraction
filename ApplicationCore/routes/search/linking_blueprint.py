@@ -46,6 +46,16 @@ def linking_topics():
                                         search_start_date, search_end_date)
         topic_linking_results = topic_linker.find_linkage()
 
+        if len(topic_linking_results) == 0:
+            operation_response = {
+            "operation_success": False,
+                "responsePayload": {
+                },
+                "error_message": ""
+            }
+            response = make_response(json.dumps(operation_response))
+            return response
+
         result_counter = 0
 
         emo_breakdown_average = None
