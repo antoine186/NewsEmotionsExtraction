@@ -38,6 +38,7 @@ from search.progression_charting_blueprint import progression_charting_blueprint
 from search.get_previous_charting_blueprint import get_previous_charting_blueprint
 from search.linking_blueprint import linking_blueprint
 from search.get_previous_linking_blueprint import get_previous_linking_blueprint
+from payment.create_checkout_blueprint import create_checkout_blueprint
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(main_page_blueprint)
@@ -71,6 +72,7 @@ app.register_blueprint(progression_charting_blueprint)
 app.register_blueprint(get_previous_charting_blueprint)
 app.register_blueprint(linking_blueprint)
 app.register_blueprint(get_previous_linking_blueprint)
+app.register_blueprint(create_checkout_blueprint)
 
 with app.app_context():
     db.init_app(app)
