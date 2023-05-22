@@ -27,8 +27,8 @@ def create_checkout():
                 },
             ],
             mode='payment',
-            success_url='https://emomachinesbackend.xyz' + '?success=true',
-            cancel_url='https://emomachinesbackend.xyz' + '?canceled=true',
+            success_url='https://emomachines.xyz' + '?success=true',
+            cancel_url='https://emomachines.xyz' + '?canceled=true',
         )
     except Exception as e:
         return str(e)
