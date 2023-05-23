@@ -8,6 +8,9 @@ from analysis.news_classifier import NewsClassifier
 from Utils.json_encoder import GenericJsonEncoder
 from app_start_helper import db
 from sqlalchemy import text
+from flask_mail import Mail, Message
+from threading import Thread
+from app_start_helper import mail
 
 emo_search_blueprint = Blueprint('emo_search_blueprint', __name__)
 
@@ -16,6 +19,16 @@ def emo_search():
     try:
         payload = request.data
         payload = json.loads(payload)
+
+        get_user_id = 'SELECT user_schema.get_user_id(:username)'
+
+        user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
+
+        add_still_searching_sp = 'CALL search_schema.add_still_searching(:user_id,:still_searching)'
+
+        db.session.execute(text(add_still_searching_sp), {'user_id': user_id[0][0], 'still_searching': True})
+
+        db.session.commit()
 
         attributes = ('year', 'month', 'day')
 
@@ -37,10 +50,6 @@ def emo_search():
         if emo_breakdown_result_metadata != None:
             emo_breakdown_result_metadata_json_data = json.dumps(emo_breakdown_result_metadata, indent=4, cls=GenericJsonEncoder)
 
-            get_user_id = 'SELECT user_schema.get_user_id(:username)'
-
-            user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
-
             delete_search_result_sp = 'CALL search_schema.delete_search_result(:user_id)'
 
             db.session.execute(text(delete_search_result_sp), {'user_id': user_id[0][0]})
@@ -53,13 +62,39 @@ def emo_search():
 
             db.session.commit()
 
+            delete_still_searching_sp = 'CALL search_schema.delete_still_searching(:user_id)'
+
+            db.session.execute(text(delete_still_searching_sp), {'user_id': user_id[0][0]})
+
+            db.session.commit()
+
             response = make_response(emo_breakdown_result_metadata_json_data)
         else:
+            delete_still_searching_sp = 'CALL search_schema.delete_still_searching(:user_id)'
+
+            db.session.execute(text(delete_still_searching_sp), {'user_id': user_id[0][0]})
+
+            db.session.commit()
+
             response = make_response(json.dumps('Error'))
 
         return response
     
     except Exception as e:
         response = make_response(json.dumps('Error'))
+
+        delete_still_searching_sp = 'CALL search_schema.delete_still_searching(:user_id)'
+
+        db.session.execute(text(delete_still_searching_sp), {'user_id': user_id[0][0]})
+
+        db.session.commit()
+
+        msg = Message()
+        msg.subject = 'Main emo search error'
+        msg.recipients = ['antoine186@hotmail.com']
+        msg.sender = 'noreply@emomachines.xyz'
+        msg.body = str(e)
+
+        Thread(target=mail.send(msg)).start()
 
         return response
