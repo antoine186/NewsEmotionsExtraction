@@ -17,6 +17,16 @@ def progression_charting():
     payload = request.data
     payload = json.loads(payload)
 
+    get_user_id = 'SELECT user_schema.get_user_id(:username)'
+
+    user_id = db.session.execute(text(get_user_id), {'username': payload['username']}).fetchall()
+
+    add_still_charting_sp = 'CALL search_schema.add_still_charting(:user_id,:still_charting)'
+
+    db.session.execute(text(add_still_charting_sp), {'user_id': user_id[0][0], 'still_charting': True})
+
+    db.session.commit()
+
     try:
         search_end_date = datetime.strptime(payload['dateInput'], '%Y-%m-%d')
 
@@ -47,6 +57,12 @@ def progression_charting():
 
         db.session.commit()
 
+        delete_still_charting_sp = 'CALL search_schema.delete_still_charting(:user_id)'
+
+        db.session.execute(text(delete_still_charting_sp), {'user_id': user_id[0][0]})
+
+        db.session.commit()
+
         operation_response = {
             "operation_success": True,
             "responsePayload": {
@@ -65,6 +81,13 @@ def progression_charting():
             "error_message": ""
         }
         response = make_response(json.dumps(operation_response))
+
+        delete_still_charting_sp = 'CALL search_schema.delete_still_charting(:user_id)'
+
+        db.session.execute(text(delete_still_charting_sp), {'user_id': user_id[0][0]})
+
+        db.session.commit()
+
         return response
 
 def emo_month_calculator(yesterdays_date, months_going_back, searchInput):
