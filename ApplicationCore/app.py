@@ -41,6 +41,7 @@ from search.get_previous_linking_blueprint import get_previous_linking_blueprint
 from payment.create_checkout_blueprint import create_checkout_blueprint
 from search.check_still_searching_blueprint import check_still_searching_blueprint
 from search.check_still_charting_blueprint import check_still_charting_blueprint
+from search.tweet_emo_mine_blueprint import tweet_emo_mine_blueprint
 
 # app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(main_page_blueprint)
@@ -77,6 +78,7 @@ app.register_blueprint(get_previous_linking_blueprint)
 app.register_blueprint(create_checkout_blueprint)
 app.register_blueprint(check_still_searching_blueprint)
 app.register_blueprint(check_still_charting_blueprint)
+app.register_blueprint(tweet_emo_mine_blueprint)
 
 with app.app_context():
     db.init_app(app)

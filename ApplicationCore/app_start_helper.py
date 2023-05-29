@@ -5,7 +5,7 @@ import sys
 from DependenciesResources.containers import Container
 from flask_mail import Mail, Message
 
-#from flask_cors import CORS
+from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
@@ -19,7 +19,7 @@ app.config['MAIL_PASSWORD'] = "jdztxwrikhatwrcn"
 
 mail = Mail(app)
 
-#CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True)
 
 db = SQLAlchemy()
 migrate = Migrate(app, db)
