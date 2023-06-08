@@ -38,7 +38,7 @@ def emo_search():
         search_end_date = attrgetter(*attributes)(search_end_date)
         search_start_date = attrgetter(*attributes)(search_start_date)
 
-        google_news = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date, max_results = 20)
+        google_news = GNews(language='en', country='US', start_date = search_start_date, end_date = search_end_date, max_results = 100)
 
         results = google_news.get_news(payload['searchInput'])
 
